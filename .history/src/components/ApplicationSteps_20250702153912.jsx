@@ -1,4 +1,4 @@
-import styles from './ApplicationSteps.module.css';
+
 
 export default function ApplicationSteps() {
   return (
