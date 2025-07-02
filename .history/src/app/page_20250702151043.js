@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import './globals.css';
 import styles from './page.module.css';
-import WhenToApply from '../components/WhenToApply';
+import WhenToApply from './WhenToApply';
 
 
 export default function Home() {

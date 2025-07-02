@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import './globals.css';
 import styles from './page.module.css';
-import WhenToApply from '../components/WhenToApply';
 
 
 export default function Home() {
@@ -23,10 +22,6 @@ export default function Home() {
           </Link>
         </div>
       </section>
-        <section className={styles.infoSection}>
-          <WhenToApply />
-          </section>
-      
 
       <div className={styles.chatButton}>💬 Live Chat</div>
     </>
