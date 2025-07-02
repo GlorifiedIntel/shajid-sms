@@ -30,7 +30,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.link {
+.mylink {
   color: #0056d2;
   text-decoration: underline;
 }
@@ -56,21 +56,21 @@
   cursor: pointer;
 }
 
-.navLinks {
+.whenToApplyNavLinks {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.navLinks a {
+.whenToApplyNavLinks a {
   color: #0b2e59;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.navLinks a:hover {
-  color: #1d4ed8;
+.whenToApplyNavLinks a:hover {
+  color: #f0bc4e;
 }
 
 .infoSection {

@@ -1,5 +1,6 @@
 import styles from './AboutSection.module.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function AboutSection() {
   return (

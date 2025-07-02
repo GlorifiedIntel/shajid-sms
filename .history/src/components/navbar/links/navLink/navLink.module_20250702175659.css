@@ -8,5 +8,5 @@
 
 .active {
     background-color: var(--web-orange);
-    color: #000;
+    color: var(--eerie-black);
 }

@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import './globals.css';
 import styles from './page.module.css';
-
+import WhenToApply from '../components/WhenToApply';
+import ApplicationSteps from "@/components/ApplicationSteps";
+import AboutSection from "@/components/AboutSection";
 
 
 
@@ -24,9 +26,16 @@ export default function Home() {
           </Link>
         </div>
       </section>
-        
-      
-      
+        <section className={styles.infoSection}>
+          <WhenToApply />
+          </section>
+      <section className={styles.applicationSteps}>
+        <ApplicationSteps />
+      </section>
+
+      <section className={styles.aboutSection}>
+        <AboutSection />
+        </section>
       <div className={styles.chatButton}>💬 Live Chat</div>
     </>
   );

@@ -1,0 +1,19 @@
+.myAccordion_accordionWrapper {
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.myAccordion_accordionHeader {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+}
+
+.myAccordion_accordionBody {
+  background-color: #fff;
+  padding: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}

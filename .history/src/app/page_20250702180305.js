@@ -26,7 +26,9 @@ export default function Home() {
       </section>
         
       
-      
+      <section className={styles.aboutSection}>
+        <AboutSection />
+        </section>
       <div className={styles.chatButton}>💬 Live Chat</div>
     </>
   );
