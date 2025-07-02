@@ -1,16 +1,13 @@
 .container {
     background-color: var(--navbar-bg);
     height: 100px;
-    display: flex;
+    
     align-items: center;
     justify-content: space-between;
+    max-width: 100%;
     padding: 1rem;
-    margin: auto;
-    height: 100px;
-    width: 100vw;
-}
     
-
+}
 
 .logoImage {
   height: 81px;
@@ -27,4 +24,7 @@
     
 }
 
-
+.logoImage {
+  height: 81px;
+  width: auto;
+}

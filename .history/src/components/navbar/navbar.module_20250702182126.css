@@ -4,13 +4,20 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
-    margin: auto;
-    height: 100px;
-    width: 100vw;
+    width: 100%;
+    /* Remove padding from here */
 }
-    
 
+.inner {
+    width: 100%;
+    max-width: 1200px; /* Optional: Controls max content width */
+    margin: 0 auto;
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
 
 .logoImage {
   height: 81px;
@@ -27,4 +34,7 @@
     
 }
 
-
+.logoImage {
+  height: 81px;
+  width: auto;
+}
