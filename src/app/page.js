@@ -4,6 +4,7 @@ import './globals.css';
 import styles from './page.module.css';
 import WhenToApply from '../components/WhenToApply';
 import ApplicationSteps from "@/components/ApplicationSteps";
+import AboutSection from "@/components/AboutSection";
 
 
 export default function Home() {
@@ -31,6 +32,9 @@ export default function Home() {
         <ApplicationSteps />
       </section>
 
+      <section className={styles.aboutSection}>
+        <AboutSection />
+        </section>
       <div className={styles.chatButton}>💬 Live Chat</div>
     </>
   );
