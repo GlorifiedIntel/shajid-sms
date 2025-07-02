@@ -34,11 +34,7 @@
 }
 
 .social-icons {
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .social-icons a {

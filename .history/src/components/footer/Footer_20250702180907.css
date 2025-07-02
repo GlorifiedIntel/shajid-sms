@@ -33,12 +33,12 @@
   text-decoration: underline;
 }
 
-.social-icons {
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 1rem;
+social-icons {
+    display: flex;
+    justify-content: center; /* Centers icons horizontally */
+    align-items: center;     /* Aligns icons vertically */
+    gap: 15px;               /* Adds spacing between icons */
+    margin-top: 20px;        /* Optional: space above icons */
 }
 
 .social-icons a {
