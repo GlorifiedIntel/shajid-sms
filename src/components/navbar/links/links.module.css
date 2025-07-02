@@ -1,0 +1,10 @@
+.links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-play);
+    font-weight: 400;
+    font-style: normal;
+    color: var(--white-smoke);
+    width: 100%;
+}
