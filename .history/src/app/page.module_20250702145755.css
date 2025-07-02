@@ -1,17 +1,10 @@
 .applyButton {
   background-color: #ffbb00;
   color: #00274c;
-  padding: 1rem;
+  padding: 0.6rem 1rem;
   border-radius: 8px;
   font-weight: bold;
   text-decoration: none;
-  margin-top: 5px;
-}
-
-.applyButton:hover {
-  background-color: #134c7a;
-  color: white;
-  transition: background-color 0.3s ease;
 }
 
 .mainSection {

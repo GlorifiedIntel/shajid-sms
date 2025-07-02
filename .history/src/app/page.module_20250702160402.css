@@ -5,13 +5,7 @@
   border-radius: 8px;
   font-weight: bold;
   text-decoration: none;
-  margin-top: 5px;
-}
-
-.applyButton:hover {
-  background-color: #134c7a;
-  color: white;
-  transition: background-color 0.3s ease;
+  width: 400px;
 }
 
 .mainSection {

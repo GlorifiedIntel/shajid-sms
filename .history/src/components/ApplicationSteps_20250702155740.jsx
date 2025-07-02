@@ -4,19 +4,19 @@ export default function ApplicationSteps() {
   return (
     <section className={styles.applicationSteps}>
       <div className={styles.step}>
-        <img src="/laptop.png" alt="Online Application" />
+        <img src="/icons/laptop.png" alt="Online Application" />
         <p>Online Application</p>
       </div>
       <div className={styles.step}>
-        <img src="/money.png" alt="Application Fee" />
+        <img src="/icons/money.png" alt="Application Fee" />
         <p>Application Fee</p>
       </div>
       <div className={styles.step}>
-        <img src="/handshake.png" alt="Endorsement" />
+        <img src="/icons/handshake.png" alt="Ecclesiastical Endorsement" />
         <p>Endorsement</p>
       </div>
       <div className={styles.step}>
-        <img src="/award.png" alt="Acceptance" />
+        <img src="/icons/award.png" alt="Acceptance" />
         <p>Acceptance</p>
       </div>
     </section>

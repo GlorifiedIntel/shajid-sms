@@ -12,7 +12,7 @@ export default function ApplicationSteps() {
         <p>Application Fee</p>
       </div>
       <div className={styles.step}>
-        <img src="/handshake.png" alt="Endorsement" />
+        <img src="/handshake.png" alt="Ecclesiastical Endorsement" />
         <p>Endorsement</p>
       </div>
       <div className={styles.step}>

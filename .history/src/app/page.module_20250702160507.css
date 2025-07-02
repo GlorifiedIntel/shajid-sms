@@ -5,7 +5,7 @@
   border-radius: 8px;
   font-weight: bold;
   text-decoration: none;
-  margin-top: 5px;
+  width: 400px;
 }
 
 .applyButton:hover {
