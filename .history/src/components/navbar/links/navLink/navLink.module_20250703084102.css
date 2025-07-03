@@ -25,7 +25,7 @@
 .mainLink {
   text-decoration: none;
   color: var(--white-smoke);
-  
+  font-weight: bold;
 }
 
 .arrow {

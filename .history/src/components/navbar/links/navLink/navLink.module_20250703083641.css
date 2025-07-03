@@ -1,9 +1,9 @@
 
 .active {
     background-color: var(--web-orange);
-    color: black;
-    padding: 12px 12px;      
-    width: 220px;            
+    color: #000;
+    padding: 12px 20px;      
+    width: 200px;            
     display: inline-block;   
     border-radius: 6px; 
     text-align: center;
@@ -25,7 +25,7 @@
 .mainLink {
   text-decoration: none;
   color: var(--white-smoke);
-  
+  font-weight: bold;
 }
 
 .arrow {

@@ -2,14 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
 import styles from './navLink.module.css';
 
 const NavLink = ({ item }) => {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
-  const isActive = pathname === item.path;
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
@@ -26,10 +22,7 @@ const NavLink = ({ item }) => {
       onMouseLeave={() => setIsOpen(false)}
     >
       <div className={styles.mainLinkWrapper} onClick={item.children ? handleToggle : undefined}>
-        <Link
-          href={item.path}
-          className={`${styles.mainLink} ${isActive ? styles.active : ''}`}
-        >
+        <Link href={item.path} className={styles.mainLink}>
           {item.title}
         </Link>
         {item.children && (
@@ -39,9 +32,8 @@ const NavLink = ({ item }) => {
 
       {item.children && isOpen && (
         <div className={styles.dropdown}>
-          {item.children.map((child) => {
-            const isChildActive = pathname === child.path;
-            return child.external ? (
+          {item.children.map((child) =>
+            child.external ? (
               <a
                 key={child.title}
                 href={child.path}
@@ -56,13 +48,13 @@ const NavLink = ({ item }) => {
               <Link
                 key={child.title}
                 href={child.path}
-                className={`${styles.dropdownLink} ${isChildActive ? styles.active : ''}`}
+                className={styles.dropdownLink}
                 onClick={handleClose}
               >
                 {child.title}
               </Link>
-            );
-          })}
+            )
+          )}
         </div>
       )}
     </div>
