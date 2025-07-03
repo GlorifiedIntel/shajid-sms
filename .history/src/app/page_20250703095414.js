@@ -2,9 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import './globals.css';
 import styles from './page.module.css';
-import WhenToApply from "@/components/WhenToApply";
 import ApplicationSteps from "@/components/ApplicationSteps";
-
 
 
 
@@ -27,9 +25,7 @@ export default function Home() {
           </Link>
         </div>
       </section>
-      <section className={styles.secondarySection}>
-        <WhenToApply />
-      </section>
+
       <section className={styles.secondarySection}>
         <ApplicationSteps />
       </section>
