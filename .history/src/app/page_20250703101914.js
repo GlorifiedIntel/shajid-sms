@@ -30,8 +30,11 @@ export default function Home() {
       </section>
       <section className={styles.secondarySection}>
         <WhenToApply />
+      </section>
+      <section className={styles.secondarySection}>
         <ApplicationSteps />
-        </section>
+      </section>
+
    
       
       

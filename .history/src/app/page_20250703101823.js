@@ -30,9 +30,14 @@ export default function Home() {
       </section>
       <section className={styles.secondarySection}>
         <WhenToApply />
+      </section>
+      <section className={styles.secondarySection}>
         <ApplicationSteps />
-        </section>
-   
+      </section>
+
+      <section className={styles.secondarySection}>
+        <AboutSection />
+      </section>
       
       
       <div className={styles.chatButton}>💬 Live Chat</div>

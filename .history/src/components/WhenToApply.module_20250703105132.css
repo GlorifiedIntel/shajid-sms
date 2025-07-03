@@ -78,53 +78,23 @@
 
 .applylink {
   display: inline-block;
-  margin-top: 0.5rem;
-  padding: 10px 18px;
-  background-color: #0069ff;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 6px;
+  margin-top: 12px;
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  color: #1e7a5b;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .applylink:hover {
-  background-color: #004bbd;
+  color: #004bbd;
+  text-decoration: underline;
 }
 
 .steplist {
-  margin-left: 0;
-  padding-left: 0;
-  list-style: none;
-  margin-bottom: 1.5rem;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin: 12px 0;
-  gap: 10px;
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeInUp 0.6s ease forwards;
-}
-
-.step:nth-child(1) { animation-delay: 0.2s; }
-.step:nth-child(2) { animation-delay: 0.4s; }
-.step:nth-child(3) { animation-delay: 0.6s; }
-.step:nth-child(4) { animation-delay: 0.8s; }
-
-.step i {
+  margin-left: 1.5rem;
+  padding-left: 0.5rem;
   font-size: 1.5rem;
-  color: #0069ff;
-}
-
-/* Animation */
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  color: #333;
+  list-style-type: decimal;
+  margin-bottom: 1.5rem;
 }

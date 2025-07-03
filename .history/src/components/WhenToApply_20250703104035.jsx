@@ -17,32 +17,11 @@ export default function WhenToApply() {
   If you have any questions or need help with your application, feel free to contact our admissions team at <strong>admissions@shajidcollege.edu.ng</strong>.
 </p>
 
-      <>
-  <p>Go to the application page to follow the four steps shown below:</p>
-
-  <ol className={styles.steplist}>
-    <li className={styles.step}>
-      <i className="bi bi-laptop"></i>
-      <span>Online Application</span>
-    </li>
-    <li className={styles.step}>
-      <i className="bi bi-cash-coin"></i>
-      <span>Application Fee</span>
-    </li>
-    <li className={styles.step}>
-      <i className="bi bi-handshake"></i>
-      <span>Endorsement</span>
-    </li>
-    <li className={styles.step}>
-      <i className="bi bi-patch-check"></i>
-      <span>Acceptance</span>
-    </li>
-  </ol>
-
-  <a href="/apply" className={styles.applylink}>
+<p>
+  <a href="/apply" className={styles.apply-link}>
     👉 Go to Application Page
   </a>
-</>
+</p>
       </div>
 
       

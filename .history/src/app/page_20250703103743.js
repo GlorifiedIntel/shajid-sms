@@ -4,7 +4,7 @@ import './globals.css';
 import styles from './page.module.css';
 import WhenToApply from "@/components/WhenToApply";
 import ApplicationSteps from "@/components/ApplicationSteps";
-
+import AboutSection from "@/components/AboutSection";
 
 
 

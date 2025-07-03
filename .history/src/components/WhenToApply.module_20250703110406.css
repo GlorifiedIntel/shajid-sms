@@ -120,11 +120,3 @@
   font-size: 1.5rem;
   color: #0069ff;
 }
-
-/* Animation */
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
