@@ -42,14 +42,11 @@ export default function ApplyPage() {
         <Sidebar />
         <div className={styles.applicationContainer}>
           <h1 className={styles.pageTitle}>Online Application Form</h1>
-
-          <div className={styles.instructions}>
-            
           </div>
 
           <StepRenderer />
         </div>
-      </div>
+      
     </FormProvider>
   );
 }

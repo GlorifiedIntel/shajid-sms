@@ -44,7 +44,8 @@ export default function ApplyPage() {
           <h1 className={styles.pageTitle}>Online Application Form</h1>
 
           <div className={styles.instructions}>
-            
+            <h2 className={styles.instructionsHeading}>Instructions to the Applicant:</h2>
+            <strong>STEP 1:</strong> Complete and submit this application form.
           </div>
 
           <StepRenderer />
