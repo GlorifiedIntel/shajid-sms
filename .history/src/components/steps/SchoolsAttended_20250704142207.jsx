@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useFormStep } from '@/context/FormContext';
-import { useEffect } from 'react';
 import styles from './SchoolsAttended.module.css';
 
 const schema = z.object({
@@ -14,36 +13,15 @@ const schema = z.object({
 });
 
 export default function SchoolsAttended() {
-  const { formData, updateFormData, nextStep, prevStep } = useFormStep();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      primarySchool: '',
-      secondarySchool: '',
-      otherInstitutions: '',
-      ...formData, // pre-fill from context if any
-    },
   });
 
-  // Reset form with data from context when formData changes
-  useEffect(() => {
-    reset({
-      primarySchool: '',
-      secondarySchool: '',
-      otherInstitutions: '',
-      ...formData,
-    });
-  }, [formData, reset]);
+  const { nextStep, prevStep, updateFormData } = useFormStep();
 
   const onSubmit = (data) => {
-    updateFormData(data);
-    nextStep();
+    updateFormData(data);  // save data in context
+    nextStep(); // go to next step
   };
 
   return (
