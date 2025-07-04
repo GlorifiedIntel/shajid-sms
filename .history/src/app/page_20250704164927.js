@@ -23,7 +23,7 @@ export default function Home() {
             <strong>APPLICATION PROCESS</strong>
           </h2>
           <p>Everything you need to know about the application process.</p>
-          <Link href="/apply" className={`${styles.applyButton} ${styles.large}`}>
+          <Link href="/src/app/apply/page.jsx" className={`${styles.applyButton} ${styles.large}`}>
             Apply Now
           </Link>
         </div>

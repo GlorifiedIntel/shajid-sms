@@ -82,7 +82,7 @@ export function FormProvider({ children }) {
         formData,
         updateFormData,
         resetForm,
-        currentStepTitle, 
+        currentStepTitle, // expose currentStepTitle here
       }}
     >
       {children}
