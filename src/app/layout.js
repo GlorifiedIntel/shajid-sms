@@ -3,6 +3,7 @@ import { Play } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/navbar/Navbar';
 import Footer from '@/components/footer/Footer';
+import '@/icons/fontawesome';
 
 
 const inter = Inter({ subsets: ['latin'] });
