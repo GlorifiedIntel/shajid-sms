@@ -68,12 +68,12 @@ export default function ExamResults() {
       }),
     });
 
-    next(); 
+    next(); // ✅ Move to next step
     router.push('/apply/step-5-program-details'); // optional: if using routing for steps
   };
 
   const goBack = () => {
-    back(); 
+    back(); // ✅ Go to previous step
     router.push('/apply/step-3-schools-attended');
   };
 

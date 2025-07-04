@@ -1,10 +1,13 @@
+'use client';
+
 import { Inter } from 'next/font/google';
 import { Play } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/navbar/Navbar';
 import Footer from '@/components/footer/Footer';
-import SessionProviderWrapper from '@/components/SessionProviderWrapper';
 import '@/icons/fontawesome';
+
+import { SessionProvider } from 'next-auth/react'; // <-- import SessionProvider
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,13 +27,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProviderWrapper>
+        <SessionProvider>
           <div className="container">
             <Navbar />
             {children}
             <Footer />
           </div>
-        </SessionProviderWrapper>
+        </SessionProvider>
       </body>
     </html>
   );

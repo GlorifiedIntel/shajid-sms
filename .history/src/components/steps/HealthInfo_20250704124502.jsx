@@ -4,7 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFormStep } from '@/context/FormContext';
+import { useFormContext } from '@/context/FormContext';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import styles from './HealthInfo.module.css';
@@ -17,7 +17,7 @@ const schema = z.object({
 });
 
 export default function HealthInfo() {
-  const { formData, updateData } = useFormStep();
+  const { formData, setFormData } = useFormContext();
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -31,9 +31,10 @@ export default function HealthInfo() {
   });
 
   const onSubmit = async (values) => {
-    updateData({
+    setFormData((prev) => ({
+      ...prev,
       healthInfo: values,
-    });
+    }));
 
     await fetch('/api/apply/step-2', {
       method: 'POST',

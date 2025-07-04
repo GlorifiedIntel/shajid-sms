@@ -4,7 +4,7 @@ import { FormProvider, useFormStep } from '@/context/FormContext';
 import Sidebar from '@/components/Sidebar';
 import PersonalInfo from '@/components/steps/PersonalInfo';
 import HealthInfo from '@/components/steps/HealthInfo';   // Add your other step components here
-import SchoolsAttended from '@/components/steps/SchoolsAttended'; 
+import SchoolAttended from '@/components/steps/SchoolAttended'; 
 import ExamResults from '@/components/steps/ExamResults';
 import ProgramDetails from '@/components/steps/ProgramDetails';
 import UTMEInfo from '@/components/steps/UTMEInfo';
@@ -20,7 +20,7 @@ function StepRenderer() {
     case 2:
       return <HealthInfo />;
     case 3:
-      return <SchoolsAttended />;
+      return <SchoolAttended />;
     case 4:
       return <ExamResults />;
     case 5:

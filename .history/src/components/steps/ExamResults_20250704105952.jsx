@@ -3,10 +3,10 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFormStep } from '@/context/FormContext'; // ✅ Correct hook name
+import { useFormContext } from '@/context/MultiStepContext';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { examSubjects } from '@/constants/subjects'; // ✅ Make sure this file exists
+import { examSubjects } from '@/constants/subjects';
 import styles from './ExamResults.module.css';
 
 const subjectSchema = z.object({
@@ -27,7 +27,7 @@ const schema = z.object({
 });
 
 export default function ExamResults() {
-  const { updateData, back, next } = useFormStep(); // ✅ Use FormContext
+  const { updateExamResults } = useFormContext();
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -57,7 +57,7 @@ export default function ExamResults() {
   const gradeOptions = ['A1', 'B2', 'B3', 'C4', 'C5', 'C6', 'D7', 'E8', 'F9'];
 
   const onSubmit = async (formValues) => {
-    updateData(formValues); // ✅ Save in context
+    updateExamResults(formValues);
 
     await fetch('/api/apply/step-4', {
       method: 'POST',
@@ -68,14 +68,10 @@ export default function ExamResults() {
       }),
     });
 
-    next(); 
-    router.push('/apply/step-5-program-details'); // optional: if using routing for steps
+    router.push('/apply/step-5-program-details');
   };
 
-  const goBack = () => {
-    back(); 
-    router.push('/apply/step-3-schools-attended');
-  };
+  const goBack = () => router.push('/apply/step-3-schools-attended');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>

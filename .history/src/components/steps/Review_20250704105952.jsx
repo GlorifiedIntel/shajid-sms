@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useFormStep } from '@/context/FormContext'; // ✅ use correct hook
+import { useFormContext } from '@/context/MultiStepContext';
 import { generateStyledPDF } from '@/utils/generateStyledPDF';
 import download from 'downloadjs';
 import toast from 'react-hot-toast';
@@ -14,7 +14,7 @@ export default function Step7Review() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [previewing, setPreviewing] = useState(false);
-  const { formData } = useFormStep(); // ✅ use correct context
+  const { formData } = useFormContext();
 
   const handleFinalSubmit = async () => {
     if (!formData) return toast.error('No data to submit');

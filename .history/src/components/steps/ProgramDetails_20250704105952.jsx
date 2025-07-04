@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFormStep } from '@/context/FormContext'; // ✅ Use correct custom hook
+import { useFormContext } from '@/context/MultiStepContext';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import styles from './ProgramDetails.module.css';
@@ -28,7 +28,7 @@ const campuses = [
 ];
 
 export default function ProgramDetails() {
-  const { updateData, back, next } = useFormStep(); // ✅ Correct context functions
+  const { updateProgramDetails } = useFormContext();
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -41,7 +41,7 @@ export default function ProgramDetails() {
   });
 
   const onSubmit = async (formValues) => {
-    updateData(formValues); // ✅ Save in context
+    updateProgramDetails(formValues);
 
     await fetch('/api/apply/step-5', {
       method: 'POST',
@@ -52,14 +52,10 @@ export default function ProgramDetails() {
       }),
     });
 
-    next(); // ✅ Move to next step
     router.push('/apply/step-6-utme');
   };
 
-  const goBack = () => {
-    back(); // ✅ Go to previous step
-    router.push('/apply/step-4-exam-results');
-  };
+  const goBack = () => router.push('/apply/step-4-exam-results');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>

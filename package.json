@@ -12,16 +12,20 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@hookform/resolvers": "^5.1.1",
     "@uidotdev/usehooks": "^2.4.1",
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",
+    "downloadjs": "^1.4.7",
     "framer-motion": "^12.23.0",
     "next": "15.3.4",
+    "next-auth": "^4.24.11",
     "pdf-lib": "^1.17.1",
     "react": "^19.0.0",
     "react-confetti": "^6.4.0",
     "react-dom": "^19.0.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "zod": "^3.25.73"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

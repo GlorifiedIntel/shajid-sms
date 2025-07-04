@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFormStep } from '@/context/FormContext'; // ✅ corrected hook
+import { useFormContext } from '@/context/MultiStepContext';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -38,7 +38,7 @@ const jambSubjectOptions = [
 ];
 
 export default function UTMEInfo({ savedData }) {
-  const { updateData } = useFormStep(); // ✅ use correct context method
+  const { updateUTMEInfo } = useFormContext();
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -68,7 +68,7 @@ export default function UTMEInfo({ savedData }) {
   }, [savedData, setValue]);
 
   const onSubmit = async (formValues) => {
-    updateData({ utmeInfo: formValues }); // ✅ store logically
+    updateUTMEInfo(formValues);
 
     await fetch('/api/apply/step-6', {
       method: 'POST',
