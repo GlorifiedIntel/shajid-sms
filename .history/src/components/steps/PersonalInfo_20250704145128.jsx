@@ -18,7 +18,7 @@ const schema = z.object({
 });
 
 export default function PersonalInfo() {
-  const { formData, updateFormData, nextStep } = useFormStep();
+  const { formData, updateData, next } = useFormStep();
 
   const {
     register,
@@ -39,8 +39,8 @@ export default function PersonalInfo() {
   });
 
   const onSubmit = (data) => {
-    updateFormData({ personalInfo: data });
-    nextStep();
+    updateData({ personalInfo: data });
+    next();
   };
 
   return (
