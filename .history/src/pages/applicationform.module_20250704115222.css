@@ -1,6 +1,6 @@
 .applicationContainer {
   padding: 2rem;
-  width: 100vw;
+  width: 800px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
 }
@@ -25,7 +25,6 @@
 .instructions li {
   margin-bottom: 1rem;
   line-height: 1.6;
-  font-size: 1.2rem;
 }
 
 .pageTitle {

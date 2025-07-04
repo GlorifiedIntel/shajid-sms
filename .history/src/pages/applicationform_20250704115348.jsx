@@ -20,13 +20,13 @@ export default function ApplicationForm() {
               <em>Note:</em> You may save a draft of this application for 30 days by clicking the <strong>"Save Draft"</strong> button at the bottom of the page.
             </li>
             <li>
-              <strong>STEP 2:</strong> Pay the &#8358;3,500 application fee online or by Bank Deposit.
+              <strong>STEP 2:</strong> Pay the &#8358;3,500 application fee online or by check.
             </li>
             <li>
               <strong>STEP 3:</strong> Agreement to abide by the Honor Code.
             </li>
             <li>
-              <strong>STEP 4:</strong> Complete the online Endorsement.
+              <strong>STEP 4:</strong> Complete the online Ecclesiastical Endorsement.
             </li>
           </ol>
         </div>

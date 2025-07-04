@@ -26,7 +26,7 @@ export default function ApplicationForm() {
               <strong>STEP 3:</strong> Agreement to abide by the Honor Code.
             </li>
             <li>
-              <strong>STEP 4:</strong> Complete the online Endorsement.
+              <strong>STEP 4:</strong> Complete the online Ecclesiastical Endorsement.
             </li>
           </ol>
         </div>

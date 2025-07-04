@@ -1,14 +1,19 @@
-import '../app/globals.css';
-import styles from './applicationform.module.css';
-
+"use client";
+import { FormProvider } from "@/context/FormContext";
+import Sidebar from "@/components/Sidebar";
+import PersonalInfo from "@/components/steps/PersonalInfo";
 import Navbar from '../components/navbar/Navbar';
 import Footer from '../components/footer/Footer';
+// You can import Step2, Step3... later
 
-export default function ApplicationForm() {
+export default function ApplyPage() {
   return (
     <>
-      <Navbar />
-      <div className={styles.applicationContainer}>
+    <Navbar />
+    <FormProvider>
+      <div className="min-h-screen flex items-start">
+        <Sidebar />
+          <div className={styles.applicationContainer}>
         <h1 className={styles.pageTitle}>Online Application Form</h1>
 
         <div className={styles.instructions}>
@@ -30,10 +35,14 @@ export default function ApplicationForm() {
             </li>
           </ol>
         </div>
-
-        {/* Your form or other content goes here */}
+          <PersonalInfo />
+          {/* Use step === 2 ? <Step2 /> : ... for next steps */}
+        </div>
       </div>
-      <Footer />
+    </FormProvider>
+
+    <Footer />
     </>
+    
   );
 }
