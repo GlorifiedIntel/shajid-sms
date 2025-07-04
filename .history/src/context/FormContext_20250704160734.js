@@ -47,16 +47,6 @@ export function FormProvider({ children }) {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
-  // New function to reset form data and step + clear localStorage
-  const resetForm = () => {
-    setFormData({});
-    setStep(1);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('formData');
-      localStorage.removeItem('formStep');
-    }
-  };
-
   return (
     <FormContext.Provider
       value={{
@@ -67,7 +57,6 @@ export function FormProvider({ children }) {
         goToStep,
         formData,
         updateFormData,
-        resetForm, // expose resetForm here
       }}
     >
       {children}

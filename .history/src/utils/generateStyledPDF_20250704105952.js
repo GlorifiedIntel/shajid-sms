@@ -8,14 +8,13 @@ async function fetchImageBytes(url) {
 
 export async function generateStyledPDF(allData) {
   const pdfDoc = await PDFDocument.create();
-  let page = pdfDoc.addPage();
+  const page = pdfDoc.addPage();
   const { width, height } = page.getSize();
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
   let y = height - 50;
-  const bottomMargin = 50;
 
   // === LOGO ===
   try {
@@ -74,25 +73,8 @@ export async function generateStyledPDF(allData) {
     y -= 20;
   }
 
-  // === HELPERS ===
-  function checkAddPage() {
-    if (y < bottomMargin) {
-      page = pdfDoc.addPage();
-      y = height - 50;
-    }
-  }
-
-  const drawLine = () => {
-    page.drawLine({
-      start: { x: 50, y: y + 10 },
-      end: { x: width - 50, y: y + 10 },
-      thickness: 0.5,
-      color: rgb(0.6, 0.6, 0.6),
-    });
-  };
-
+  // === DRAW HELPERS ===
   const drawSectionHeader = (title) => {
-    checkAddPage();
     page.drawText(title, {
       x: 50,
       y,
@@ -100,32 +82,21 @@ export async function generateStyledPDF(allData) {
       font: boldFont,
       color: rgb(0.2, 0.2, 0.7),
     });
-    drawLine();
-    y -= 25;
+    y -= 20;
   };
 
   const drawField = (label, value) => {
-    checkAddPage();
-    page.drawText(`${label}:`, {
+    page.drawText(`${label}: ${value || 'N/A'}`, {
       x: 60,
       y,
       size: 10,
-      font: boldFont,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    page.drawText(`${value || 'N/A'}`, {
-      x: 150,
-      y,
-      size: 10,
       font,
-      color: rgb(0.3, 0.3, 0.3),
+      color: rgb(0, 0, 0),
     });
     y -= 14;
   };
 
-  const space = (amt = 15) => {
-    y -= amt;
-  };
+  const space = (amt = 10) => (y -= amt);
 
   // === TITLE ===
   page.drawText('Application Summary', {
@@ -147,7 +118,7 @@ export async function generateStyledPDF(allData) {
   drawField('Phone', personal.phone);
   drawField('Contact Address', personal.address);
   drawField('Parent/Guardian Name', personal.parentName);
-  drawField("Parent's Contact Address", personal.parentAddress);
+  drawField('Parent\'s Contact Address', personal.parentAddress);
   space();
 
   // === Health Info ===
@@ -173,9 +144,9 @@ export async function generateStyledPDF(allData) {
   drawField('Exam Type', sit1.examType);
   drawField('Exam Year', sit1.examYear);
   drawField('Exam Number', sit1.examNumber);
-  (sit1.subjects || []).forEach((s, i) => {
-    drawField(`Subject ${i + 1}`, `${s.subject} - ${s.grade}`);
-  });
+  (sit1.subjects || []).forEach((s, i) =>
+    drawField(`Subject ${i + 1}`, `${s.subject} - ${s.grade}`)
+  );
   space();
 
   // === Exam Results: Sitting 2 (Optional) ===
@@ -185,9 +156,9 @@ export async function generateStyledPDF(allData) {
     drawField('Exam Type', sit2.examType);
     drawField('Exam Year', sit2.examYear);
     drawField('Exam Number', sit2.examNumber);
-    (sit2.subjects || []).forEach((s, i) => {
-      drawField(`Subject ${i + 1}`, `${s.subject} - ${s.grade}`);
-    });
+    (sit2.subjects || []).forEach((s, i) =>
+      drawField(`Subject ${i + 1}`, `${s.subject} - ${s.grade}`)
+    );
     space();
   }
 

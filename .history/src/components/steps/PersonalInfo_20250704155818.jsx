@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormStep } from '@/context/FormContext';
 import * as z from 'zod';
 import styles from './PersonalInfo.module.css';
-import { useEffect } from 'react';
 
 const schema = z.object({
   fullName: z.string().min(3, 'Full name is required'),
@@ -21,20 +20,13 @@ const schema = z.object({
 export default function PersonalInfo() {
   const { formData, updateFormData, nextStep } = useFormStep();
 
-  // Try to get saved data from localStorage
-  const savedFormData = typeof window !== 'undefined' 
-    ? JSON.parse(localStorage.getItem('personalInfo') || 'null') 
-    : null;
-
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-    watch,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: savedFormData || formData.personalInfo || {
+    defaultValues: formData.personalInfo || {
       fullName: '',
       gender: '',
       email: '',
@@ -45,21 +37,6 @@ export default function PersonalInfo() {
       parentAddress: '',
     },
   });
-
-  // Sync form changes to localStorage
-  useEffect(() => {
-    const subscription = watch((value) => {
-      localStorage.setItem('personalInfo', JSON.stringify(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  // If your context formData.personalInfo changes, reset the form with that data (optional)
-  useEffect(() => {
-    if (formData.personalInfo) {
-      reset(formData.personalInfo);
-    }
-  }, [formData.personalInfo, reset]);
 
   const onSubmit = (data) => {
     updateFormData({ personalInfo: data });
