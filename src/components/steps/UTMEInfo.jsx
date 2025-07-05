@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormStep } from '@/context/FormContext';
 import { useSession } from 'next-auth/react';
 import styles from './UTMEInfo.module.css';
-import { useEffect } from 'react';
 
 const schema = z.object({
   jambRegNo: z.string().min(6, 'Enter a valid JAMB Reg Number'),
@@ -40,20 +39,14 @@ export default function UTMEInfo() {
   const { formData, updateFormData, nextStep, prevStep } = useFormStep();
   const { data: session } = useSession();
 
-  // Load saved data from localStorage if present
-  const savedFormData = typeof window !== 'undefined'
-    ? JSON.parse(localStorage.getItem('utmeInfo') || 'null')
-    : null;
-
   const {
     register,
     handleSubmit,
     watch,
-    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: savedFormData || formData.utmeInfo || {
+    defaultValues: formData.utmeInfo || {
       jambRegNo: '',
       jambScore: '',
       jambSubjects: [],
@@ -61,21 +54,6 @@ export default function UTMEInfo() {
   });
 
   const selectedSubjects = watch('jambSubjects', []);
-
-  // Save form data to localStorage on every change
-  useEffect(() => {
-    const subscription = watch((value) => {
-      localStorage.setItem('utmeInfo', JSON.stringify(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  // Reset form if context data changes
-  useEffect(() => {
-    if (formData.utmeInfo) {
-      reset(formData.utmeInfo);
-    }
-  }, [formData.utmeInfo, reset]);
 
   const onSubmit = async (formValues) => {
     updateFormData({ utmeInfo: formValues });
@@ -89,53 +67,62 @@ export default function UTMEInfo() {
           data: formValues,
         }),
       });
+
+      nextStep();
     } catch (err) {
       console.error('Error saving UTME info:', err);
     }
-
-    nextStep();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <label>JAMB Registration Number</label>
-      <input {...register('jambRegNo')} className={styles.input} />
-      {errors.jambRegNo && <p className={styles.error}>{errors.jambRegNo.message}</p>}
+      <h2 className={styles.heading}>Step 6: UTME Information</h2>
+      <p className={styles.subtext}>Provide your JAMB/UTME exam details.</p>
 
-      <label>JAMB Total Score</label>
-      <input
-        type="number"
-        {...register('jambScore', { valueAsNumber: true })}
-        className={styles.input}
-      />
-      {errors.jambScore && <p className={styles.error}>{errors.jambScore.message}</p>}
-
-      <label>JAMB Subject Combination (Select 4)</label>
-      <div className={styles.checkboxGrid}>
-        {jambSubjectOptions.map((subj) => (
-          <label key={subj} className={styles.checkboxItem}>
-            <input
-              type="checkbox"
-              value={subj}
-              {...register('jambSubjects')}
-              disabled={
-                !selectedSubjects.includes(subj) && selectedSubjects.length >= 4
-              }
-            />
-            {subj}
-          </label>
-        ))}
+      <div className={styles.field}>
+        <label>JAMB Registration Number</label>
+        <input {...register('jambRegNo')} className={styles.input} />
+        {errors.jambRegNo && <p className={styles.error}>{errors.jambRegNo.message}</p>}
       </div>
-      {errors.jambSubjects && (
-        <p className={styles.error}>{errors.jambSubjects.message}</p>
-      )}
+
+      <div className={styles.field}>
+        <label>JAMB Total Score</label>
+        <input
+          type="number"
+          {...register('jambScore', { valueAsNumber: true })}
+          className={styles.input}
+        />
+        {errors.jambScore && <p className={styles.error}>{errors.jambScore.message}</p>}
+      </div>
+
+      <div className={styles.field}>
+        <label>JAMB Subject Combination (Select 4)</label>
+        <div className={styles.checkboxGrid}>
+          {jambSubjectOptions.map((subject) => (
+            <label key={subject} className={styles.checkboxItem}>
+              <input
+                type="checkbox"
+                value={subject}
+                {...register('jambSubjects')}
+                disabled={
+                  !selectedSubjects.includes(subject) && selectedSubjects.length >= 4
+                }
+              />
+              {subject}
+            </label>
+          ))}
+        </div>
+        {errors.jambSubjects && (
+          <p className={styles.error}>{errors.jambSubjects.message}</p>
+        )}
+      </div>
 
       <div className={styles.actions}>
         <button type="button" onClick={prevStep} className={styles.backButton}>
           Back
         </button>
         <button type="submit" className={styles.button}>
-          Next
+          Save and Continue
         </button>
       </div>
     </form>

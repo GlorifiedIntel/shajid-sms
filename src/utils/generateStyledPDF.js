@@ -17,12 +17,10 @@ export async function generateStyledPDF(allData) {
   let y = height - 50;
   const bottomMargin = 50;
 
-  // === LOGO ===
   try {
     const logoBytes = await fetchImageBytes('/logo.png');
     const logoImage = await pdfDoc.embedPng(logoBytes);
     const logoDims = logoImage.scale(0.25);
-
     page.drawImage(logoImage, {
       x: width - logoDims.width - 40,
       y: height - logoDims.height - 30,
@@ -33,7 +31,6 @@ export async function generateStyledPDF(allData) {
     console.warn('Logo image not found or failed to load:', e);
   }
 
-  // === WATERMARK ===
   page.drawText('SHAJID COLLEGE OF NURSING', {
     x: 80,
     y: height / 2,
@@ -44,13 +41,21 @@ export async function generateStyledPDF(allData) {
     color: rgb(0.5, 0.5, 0.5),
   });
 
-  // === PASSPORT PHOTO ===
+  // --- Fixed Passport Photo Embedding ---
   try {
-    const photoUrl = allData.personalInfo?.photoUrl || '/default-avatar.jpg';
+    const photoUrl = allData.personalInfo?.photo || '/default-avatar.jpg';
     const photoBytes = await fetchImageBytes(photoUrl);
-    const photoImage = photoUrl.endsWith('.png')
-      ? await pdfDoc.embedPng(photoBytes)
-      : await pdfDoc.embedJpg(photoBytes);
+    const lowerUrl = photoUrl.toLowerCase();
+
+    let photoImage;
+    if (lowerUrl.endsWith('.png')) {
+      photoImage = await pdfDoc.embedPng(photoBytes);
+    } else if (lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg')) {
+      photoImage = await pdfDoc.embedJpg(photoBytes);
+    } else {
+      throw new Error('Unsupported image format (must be PNG or JPG)');
+    }
+
     const photoDims = photoImage.scale(0.2);
 
     page.drawImage(photoImage, {
@@ -73,8 +78,8 @@ export async function generateStyledPDF(allData) {
     console.warn('Passport photo load failed:', err);
     y -= 20;
   }
+  // --- End Passport Photo ---
 
-  // === HELPERS ===
   function checkAddPage() {
     if (y < bottomMargin) {
       page = pdfDoc.addPage();
@@ -104,7 +109,7 @@ export async function generateStyledPDF(allData) {
     y -= 25;
   };
 
-  const drawField = (label, value) => {
+  const drawField = (label, value, isStrong = false) => {
     checkAddPage();
     page.drawText(`${label}:`, {
       x: 60,
@@ -117,17 +122,73 @@ export async function generateStyledPDF(allData) {
       x: 150,
       y,
       size: 10,
-      font,
+      font: isStrong ? boldFont : font,
       color: rgb(0.3, 0.3, 0.3),
     });
     y -= 14;
+  };
+
+  const drawSchoolsTable = (primary, secondary, others) => {
+    checkAddPage();
+    page.drawText('Level', { x: 60, y, size: 10, font: boldFont });
+    page.drawText('School Name', { x: 140, y, size: 10, font: boldFont });
+    page.drawText('From', { x: 360, y, size: 10, font: boldFont });
+    page.drawText('To', { x: 420, y, size: 10, font: boldFont });
+    y -= 15;
+
+    const row = (label, school) => {
+      page.drawText(label, { x: 60, y, size: 10, font });
+      page.drawText(school?.name || 'N/A', { x: 140, y, size: 10, font });
+      page.drawText(school?.from || 'N/A', { x: 360, y, size: 10, font });
+      page.drawText(school?.to || 'N/A', { x: 420, y, size: 10, font });
+      y -= 14;
+    };
+
+    row('Primary', primary);
+    row('Secondary', secondary);
+
+    if (others) {
+      page.drawText('Other Institutions:', { x: 60, y, size: 10, font: boldFont });
+      y -= 14;
+      page.drawText(others, { x: 80, y, size: 10, font });
+      y -= 14;
+    }
+  };
+
+  const drawExamTable = (sitting) => {
+    drawField('Exam Type', sitting.examType);
+    drawField('Exam Year', sitting.examYear);
+    drawField('Exam Number', sitting.examNumber);
+
+    checkAddPage();
+    page.drawText('Subject', { x: 60, y, size: 10, font: boldFont });
+    page.drawText('Grade', { x: 300, y, size: 10, font: boldFont });
+    y -= 14;
+
+    (sitting.subjects || []).forEach((s) => {
+      checkAddPage();
+      page.drawText(s.subject || '-', { x: 60, y, size: 10, font });
+      page.drawText(s.grade || '-', { x: 300, y, size: 10, font });
+      y -= 14;
+    });
+  };
+
+  const drawUtmeSubjects = (subjects) => {
+    checkAddPage();
+    page.drawText('Subject', { x: 60, y, size: 10, font: boldFont });
+    y -= 14;
+
+    subjects.forEach((subj) => {
+      checkAddPage();
+      page.drawText(subj, { x: 60, y, size: 10, font });
+      y -= 14;
+    });
   };
 
   const space = (amt = 15) => {
     y -= amt;
   };
 
-  // === TITLE ===
   page.drawText('Application Summary', {
     x: 50,
     y,
@@ -137,10 +198,9 @@ export async function generateStyledPDF(allData) {
   });
   y -= 30;
 
-  // === Personal Info ===
   const personal = allData.personalInfo || {};
   drawSectionHeader('Personal Information');
-  drawField('Full Name', personal.fullName);
+  drawField('Full Name', personal.fullName, true);
   drawField('Gender', personal.gender);
   drawField('Date of Birth', personal.dob);
   drawField('Email', personal.email);
@@ -150,7 +210,6 @@ export async function generateStyledPDF(allData) {
   drawField("Parent's Contact Address", personal.parentAddress);
   space();
 
-  // === Health Info ===
   const health = allData.healthInfo || {};
   drawSectionHeader('Health Information');
   drawField('Chronic Illness', health.chronicIllness);
@@ -159,55 +218,45 @@ export async function generateStyledPDF(allData) {
   drawField('Emergency Contact', health.emergencyContact);
   space();
 
-  // === Schools Attended ===
-  const schools = allData.schoolsAttended || {};
   drawSectionHeader('Schools Attended');
-  drawField('Primary School', schools.primarySchool);
-  drawField('Secondary School', schools.secondarySchool);
-  drawField('Other Institutions', schools.otherInstitutions);
+  drawSchoolsTable(
+    allData.schoolsAttended?.primarySchool,
+    allData.schoolsAttended?.secondarySchool,
+    allData.schoolsAttended?.otherInstitutions
+  );
   space();
 
-  // === Exam Results: Sitting 1 ===
   const sit1 = allData.examResults?.sitting1 || {};
   drawSectionHeader('Exam Results - Sitting 1');
-  drawField('Exam Type', sit1.examType);
-  drawField('Exam Year', sit1.examYear);
-  drawField('Exam Number', sit1.examNumber);
-  (sit1.subjects || []).forEach((s, i) => {
-    drawField(`Subject ${i + 1}`, `${s.subject} - ${s.grade}`);
-  });
+  drawExamTable(sit1);
   space();
 
-  // === Exam Results: Sitting 2 (Optional) ===
   const sit2 = allData.examResults?.sitting2;
   if (sit2?.examType) {
     drawSectionHeader('Exam Results - Sitting 2');
-    drawField('Exam Type', sit2.examType);
-    drawField('Exam Year', sit2.examYear);
-    drawField('Exam Number', sit2.examNumber);
-    (sit2.subjects || []).forEach((s, i) => {
-      drawField(`Subject ${i + 1}`, `${s.subject} - ${s.grade}`);
-    });
+    drawExamTable(sit2);
     space();
   }
 
-  // === Program Details ===
   const program = allData.programDetails || {};
   drawSectionHeader('Program Details');
-  drawField('Program of Choice', program.program);
+  drawField('Program of Choice', program.program, true);
   drawField('Mode of Study', program.mode);
   drawField('Campus', program.campus);
   space();
 
-  // === UTME Info ===
   const utme = allData.utmeInfo || {};
   drawSectionHeader('UTME Information');
   drawField('JAMB Reg No', utme.jambRegNo);
   drawField('JAMB Score', utme.jambScore);
-  drawField('Subjects', (utme.jambSubjects || []).join(', '));
+  drawUtmeSubjects(utme.jambSubjects || []);
   space();
 
-  // === FOOTER ===
+  drawSectionHeader('Declaration');
+  drawField('Signature', '_________________________');
+  drawField('Date', new Date().toLocaleDateString());
+  space();
+
   pdfDoc.getPages().forEach((pg, index) => {
     pg.drawText(`Page ${index + 1} of ${pdfDoc.getPageCount()}`, {
       x: pg.getWidth() - 100,

@@ -54,3 +54,23 @@
   border: none;
   cursor: pointer;
 }
+
+.currentTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.field {
+  gap: 0.05rem;
+}
+
+.field label {
+  width: 120px; 
+  font-weight: 500;
+}

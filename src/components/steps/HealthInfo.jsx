@@ -4,8 +4,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormStep } from '@/context/FormContext';
+import { useSession } from 'next-auth/react';
 import styles from './HealthInfo.module.css';
-import { useEffect } from 'react';
 
 const schema = z.object({
   chronicIllness: z.string().min(1, 'Please describe or enter "None"'),
@@ -16,21 +16,15 @@ const schema = z.object({
 
 export default function HealthInfo() {
   const { formData, updateFormData, nextStep, prevStep } = useFormStep();
-
-  // Load saved data from localStorage if any
-  const savedFormData = typeof window !== 'undefined'
-    ? JSON.parse(localStorage.getItem('healthInfo') || 'null')
-    : null;
+  const { data: session } = useSession();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-    watch,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: savedFormData || formData.healthInfo || {
+    defaultValues: formData.healthInfo || {
       chronicIllness: '',
       bloodGroup: '',
       genotype: '',
@@ -38,28 +32,30 @@ export default function HealthInfo() {
     },
   });
 
-  // Save form data to localStorage on changes
-  useEffect(() => {
-    const subscription = watch((value) => {
-      localStorage.setItem('healthInfo', JSON.stringify(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  // Reset form if context data changes (optional)
-  useEffect(() => {
-    if (formData.healthInfo) {
-      reset(formData.healthInfo);
-    }
-  }, [formData.healthInfo, reset]);
-
   const onSubmit = async (values) => {
     updateFormData({ healthInfo: values });
+
+    try {
+      await fetch('/api/apply/step-2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: session?.user?.id,
+          data: values,
+        }),
+      });
+    } catch (err) {
+      console.error('Error saving health info:', err);
+    }
+
     nextStep();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
+      <h2 className={styles.heading}>Step 2: Health Information</h2>
+      <p className={styles.subtext}>Let us know a bit about your health background.</p>
+
       <div className={styles.field}>
         <label>Do you have any chronic illness?</label>
         <input {...register('chronicIllness')} className={styles.input} />
@@ -106,7 +102,7 @@ export default function HealthInfo() {
           Back
         </button>
         <button type="submit" className={styles.button}>
-          Next
+          Save and Continue
         </button>
       </div>
     </form>

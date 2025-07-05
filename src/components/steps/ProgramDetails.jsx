@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormStep } from '@/context/FormContext';
 import { useSession } from 'next-auth/react';
 import styles from './ProgramDetails.module.css';
-import { useEffect } from 'react';
 
 const schema = z.object({
   program: z.string().min(1, 'Select your preferred program'),
@@ -31,40 +30,18 @@ export default function ProgramDetails() {
   const { formData, updateFormData, nextStep, prevStep } = useFormStep();
   const { data: session } = useSession();
 
-  // Load saved data from localStorage if present
-  const savedFormData = typeof window !== 'undefined'
-    ? JSON.parse(localStorage.getItem('programDetails') || 'null')
-    : null;
-
   const {
     register,
     handleSubmit,
-    reset,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: savedFormData || formData.programDetails || {
+    defaultValues: formData.programDetails || {
       program: '',
       mode: '',
       campus: '',
     },
   });
-
-  // Save form data to localStorage on every change
-  useEffect(() => {
-    const subscription = watch((value) => {
-      localStorage.setItem('programDetails', JSON.stringify(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  // Reset form if context data changes
-  useEffect(() => {
-    if (formData.programDetails) {
-      reset(formData.programDetails);
-    }
-  }, [formData.programDetails, reset]);
 
   const onSubmit = async (formValues) => {
     updateFormData({ programDetails: formValues });
@@ -78,51 +55,60 @@ export default function ProgramDetails() {
           data: formValues,
         }),
       });
+
+      nextStep();
     } catch (err) {
       console.error('Error submitting program details:', err);
     }
-
-    nextStep();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <label>Program of Choice</label>
-      <select {...register('program')} className={styles.input}>
-        <option value="">Select a program</option>
-        {programs.map((p) => (
-          <option key={p} value={p}>
-            {p}
-          </option>
-        ))}
-      </select>
-      {errors.program && <p className={styles.error}>{errors.program.message}</p>}
+      <h2 className={styles.heading}>Step 5: Program Details</h2>
+      <p className={styles.subtext}>Select your desired program and study preferences.</p>
 
-      <label>Mode of Study</label>
-      <select {...register('mode')} className={styles.input}>
-        <option value="">Select mode</option>
-        <option value="Full-time">Full-time</option>
-        <option value="Part-time">Part-time</option>
-      </select>
-      {errors.mode && <p className={styles.error}>{errors.mode.message}</p>}
+      <div className={styles.field}>
+        <label>Program of Choice</label>
+        <select {...register('program')} className={styles.input}>
+          <option value="">Select a program</option>
+          {programs.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
+        {errors.program && <p className={styles.error}>{errors.program.message}</p>}
+      </div>
 
-      <label>Preferred Campus</label>
-      <select {...register('campus')} className={styles.input}>
-        <option value="">Select campus</option>
-        {campuses.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
-      {errors.campus && <p className={styles.error}>{errors.campus.message}</p>}
+      <div className={styles.field}>
+        <label>Mode of Study</label>
+        <select {...register('mode')} className={styles.input}>
+          <option value="">Select mode</option>
+          <option value="Full-time">Full-time</option>
+          <option value="Part-time">Part-time</option>
+        </select>
+        {errors.mode && <p className={styles.error}>{errors.mode.message}</p>}
+      </div>
+
+      <div className={styles.field}>
+        <label>Preferred Campus</label>
+        <select {...register('campus')} className={styles.input}>
+          <option value="">Select campus</option>
+          {campuses.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+        {errors.campus && <p className={styles.error}>{errors.campus.message}</p>}
+      </div>
 
       <div className={styles.actions}>
         <button type="button" onClick={prevStep} className={styles.backButton}>
           Back
         </button>
         <button type="submit" className={styles.button}>
-          Next
+          Save and Continue
         </button>
       </div>
     </form>

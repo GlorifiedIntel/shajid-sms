@@ -26,6 +26,14 @@ export default function Home() {
           <Link href="/apply" className={`${styles.applyButton} ${styles.large}`}>
             Apply Now
           </Link>
+
+          <Link href="/create-account" className={`${styles.createButton} ${styles.large}`}>
+            Create Account
+          </Link>
+
+          <Link href="/sign-in" className={`${styles.signinButton} ${styles.large}`}>
+            Sign In
+          </Link>
         </div>
       </section>
       <section className={styles.secondarySection}>

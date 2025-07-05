@@ -1,5 +1,5 @@
-// components/Sidebar.jsx
 "use client";
+
 import styles from "./Sidebar.module.css";
 import { useFormStep } from "@/context/FormContext";
 
@@ -14,26 +14,51 @@ const steps = [
 ];
 
 export default function Sidebar() {
-  const { step } = useFormStep();
+  const { step, goToStep } = useFormStep();
 
   return (
     <div className={styles.sidebar}>
       {steps.map((label, index) => {
-        const isActive = step === index + 1;
+        const stepNumber = index + 1;
+        const isActive = step === stepNumber;
+        const isDisabled = step < stepNumber;
+
         return (
           <div
             key={label}
-            className={`${styles.stepItem} ${isActive ? styles.active : ""}`}
+            className={`${styles.stepItem} ${isActive ? styles.active : ""} ${
+              isDisabled ? styles.disabled : ""
+            }`}
+            onClick={(e) => {
+              if (isDisabled) {
+                e.preventDefault();
+              } else {
+                goToStep(stepNumber);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && !isDisabled) {
+                goToStep(stepNumber);
+              }
+            }}
+            aria-current={isActive ? "step" : undefined}
+            aria-disabled={isDisabled}
           >
             <div
               className={`${styles.stepCircle} ${
-                isActive ? styles.active : ""
+                isActive
+                  ? styles.active
+                  : isDisabled
+                  ? styles.disabledCircle
+                  : ""
               }`}
             >
-              {index + 1}
+              {stepNumber}
             </div>
             <div className={styles.stepText}>
-              <div className={styles.stepNumber}>STEP {index + 1}</div>
+              <div className={styles.stepNumber}>STEP {stepNumber}</div>
               <div className={styles.stepLabel}>{label}</div>
             </div>
           </div>

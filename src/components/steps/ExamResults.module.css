@@ -12,6 +12,17 @@
   font-size: 1rem;
 }
 
+.field {
+  display: flex;
+  align-items: center;
+  gap: 0.05rem;
+}
+
+.field label {
+  width: 120px; 
+  font-weight: 500;
+}
+
 .subjectRow {
   display: flex;
   gap: 1rem;
@@ -56,4 +67,50 @@
   font-weight: 500;
   border: none;
   cursor: pointer;
+}
+
+.currentTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.resultsTable {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #fdfdfd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sittingSection {
+  margin-bottom: 2rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f9f9f9;
 }

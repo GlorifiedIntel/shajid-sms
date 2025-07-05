@@ -2,10 +2,11 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useFormStep } from '@/context/FormContext';
-import * as z from 'zod';
+import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import styles from './PersonalInfo.module.css';
-import { useEffect } from 'react';
 
 const schema = z.object({
   fullName: z.string().min(3, 'Full name is required'),
@@ -16,25 +17,24 @@ const schema = z.object({
   dob: z.string().min(1, 'Date of birth is required'),
   parentName: z.string().min(3, 'Parent/Guardian name is required'),
   parentAddress: z.string().min(5, "Parent's contact address is required"),
+  // no validation for photo because it’s optional
 });
 
 export default function PersonalInfo() {
   const { formData, updateFormData, nextStep } = useFormStep();
+  const { data: session } = useSession();
 
-  // Try to get saved data from localStorage
-  const savedFormData = typeof window !== 'undefined' 
-    ? JSON.parse(localStorage.getItem('personalInfo') || 'null') 
-    : null;
+  // local state for photo preview
+  const [photoPreview, setPhotoPreview] = useState(formData.personalInfo?.photo || '');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-    watch,
+    setValue,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: savedFormData || formData.personalInfo || {
+    defaultValues: formData.personalInfo || {
       fullName: '',
       gender: '',
       email: '',
@@ -43,32 +43,60 @@ export default function PersonalInfo() {
       dob: '',
       parentName: '',
       parentAddress: '',
+      photo: '',
     },
   });
 
-  // Sync form changes to localStorage
+  // If formData.personalInfo.photo changes externally, update preview
   useEffect(() => {
-    const subscription = watch((value) => {
-      localStorage.setItem('personalInfo', JSON.stringify(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  // If your context formData.personalInfo changes, reset the form with that data (optional)
-  useEffect(() => {
-    if (formData.personalInfo) {
-      reset(formData.personalInfo);
+    if (formData.personalInfo?.photo) {
+      setPhotoPreview(formData.personalInfo.photo);
+      setValue('photo', formData.personalInfo.photo);
     }
-  }, [formData.personalInfo, reset]);
+  }, [formData.personalInfo?.photo, setValue]);
 
-  const onSubmit = (data) => {
+  const onPhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result.toString();
+      setPhotoPreview(base64String);
+      // Update form value & form data context with base64 string
+      setValue('photo', base64String);
+      updateFormData({
+        personalInfo: {
+          ...formData.personalInfo,
+          photo: base64String,
+        },
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onSubmit = async (data) => {
     updateFormData({ personalInfo: data });
+
+    try {
+      await fetch('/api/apply/step-1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: session?.user?.id,
+          data,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to save personal info:', error);
+    }
+
     nextStep();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
-      <h2 className={styles.heading}>Personal Information</h2>
+      <h2 className={styles.heading}>Step 1: Personal Information</h2>
       <p className={styles.subtext}>Please fill in the required details below.</p>
 
       <input
@@ -138,8 +166,25 @@ export default function PersonalInfo() {
       />
       {errors.parentAddress && <p className={styles.error}>{errors.parentAddress.message}</p>}
 
+      {/* Photo upload */}
+      <label className={styles.label} htmlFor="photoUpload">Upload Passport Photo</label>
+      <input
+        type="file"
+        id="photoUpload"
+        accept="image/*"
+        onChange={onPhotoChange}
+        className={styles.input}
+      />
+      {photoPreview && (
+        <img
+          src={photoPreview}
+          alt="Passport Preview"
+          style={{ maxWidth: '150px', marginTop: '10px', borderRadius: '5px' }}
+        />
+      )}
+
       <button type="submit" className={styles.button}>
-        Next
+        Save and Continue
       </button>
     </form>
   );

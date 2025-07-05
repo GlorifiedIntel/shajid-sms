@@ -1,5 +1,4 @@
-import { connectToDatabase } from '@/utils/mongodb';
-import { ObjectId } from 'mongodb';
+import { connectToDatabase } from '@/lib/mongodb';
 
 export async function POST(req) {
   try {
@@ -14,17 +13,18 @@ export async function POST(req) {
 
     const { db } = await connectToDatabase();
 
-    const filter = { userId: ObjectId.isValid(userId) ? new ObjectId(userId) : userId };
+    const filter = { userId }; // use email string directly
     const now = new Date();
 
     const updateDoc = {
       $set: {
-        data,
+        finalSubmission: data,
         updatedAt: now,
         status: 'submitted',
       },
       $setOnInsert: {
         createdAt: now,
+        userId, // store email as userId
       },
     };
 
@@ -38,6 +38,7 @@ export async function POST(req) {
         upsertedId: result.upsertedId || null,
         matchedCount: result.matchedCount,
         modifiedCount: result.modifiedCount,
+        createdAt: now.toISOString(),
       }),
       { status: 200 }
     );

@@ -1,50 +1,50 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import EmailProvider from "next-auth/providers/email";
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import clientPromise from "@/lib/mongodb";
+import NextAuth from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import dbConnect from '@/lib/mongodb';
+import User from '@/models/User';
+import bcrypt from 'bcryptjs';
 
-export const authOptions = {
-  adapter: MongoDBAdapter(clientPromise),
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "Your username" },
-        password: { label: "Password", type: "password" },
+        username: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const { username, password } = credentials;
-        if (username === "admin" && password === "password123") {
-          return { id: 1, name: "Admin User", email: "admin@example.com" };
-        }
-        return null;
+        await dbConnect();
+
+        const user = await User.findOne({ email: credentials.username });
+        if (!user) return null;
+
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) return null;
+
+        return {
+          id: user._id.toString(),
+          name: user.fullName,
+          email: user.email,
+        };
       },
     }),
-    EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
-    }),
   ],
-  session: {
-    strategy: "jwt",
-  },
   pages: {
-    signIn: "/auth/signin",
+    signIn: '/auth/signin',
+  },
+  session: {
+    strategy: 'jwt',
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.user = user;
+      if (user) token.id = user.id;
       return token;
     },
     async session({ session, token }) {
-      session.user = token.user;
+      session.user.id = token.id;
       return session;
     },
   },
-  debug: process.env.NODE_ENV === "development",
-};
-
-const handler = NextAuth(authOptions);
+});
 
 export { handler as GET, handler as POST };

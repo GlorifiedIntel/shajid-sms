@@ -50,3 +50,28 @@
   margin-top: -0.75rem;
   margin-bottom: 0.75rem;
 }
+
+.currentTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.uploadContainer {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.photoPreview {
+  margin-top: 0.5rem;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}

@@ -19,7 +19,7 @@
   color: #1a1a1a;
 }
 
-.summaryBox {
+.previewBox {
   background-color: #f9fafb;
   border: 1px solid #e2e8f0;
   padding: 1.5rem;
@@ -29,6 +29,8 @@
   margin-bottom: 2rem;
   line-height: 1.5;
   font-size: 1rem;
+  white-space: pre-wrap; /* preserve formatting */
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .sectionTitle {
@@ -121,4 +123,103 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.currentTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.reviewTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.reviewTable th,
+.reviewTable td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.sectionHeading {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.tableKey {
+  font-weight: 500;
+  text-transform: capitalize;
+  width: 35%;
+}
+
+.tableValue {
+  color: #444;
+  width: 65%;
+}
+
+.reviewTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.reviewTable th,
+.reviewTable td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.reviewTable th {
+  background-color: #f0f0f0;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.subSection {
+  margin-top: 1.5rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionHeading {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.passportPhotoContainer {
+  max-width: 150px;
+  max-height: 150px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: inline-block;
+  background: white;
+}
+
+.passportPhoto {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 4px;
 }

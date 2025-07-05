@@ -7,44 +7,57 @@ import { useFormStep } from '@/context/FormContext';
 import { useSession } from 'next-auth/react';
 import { examSubjects } from '@/constants/subjects';
 import styles from './ExamResults.module.css';
-import { useEffect } from 'react';
 
 const subjectSchema = z.object({
-  subject: z.string().min(1),
-  grade: z.string().min(1),
+  subject: z.string().min(1, 'Subject is required'),
+  grade: z.string().min(1, 'Grade is required'),
 });
 
 const sittingSchema = z.object({
-  examType: z.string().min(1),
-  examYear: z.string().min(4),
-  examNumber: z.string().min(5),
-  subjects: z.array(subjectSchema).min(5, 'At least 5 subjects required'),
+  examType: z.string().min(1, 'Exam type is required'),
+  examYear: z.string().min(4, 'Enter a valid exam year'),
+  examNumber: z.string().min(5, 'Enter a valid exam number'),
+  subjects: z.array(subjectSchema).min(5, 'At least 5 subjects are required'),
 });
 
-const schema = z.object({
-  sitting1: sittingSchema,
-  sitting2: sittingSchema.optional(),
-});
+const schema = z
+  .object({
+    sitting1: sittingSchema,
+    sitting2: z
+      .object({
+        examType: z.string(),
+        examYear: z.string(),
+        examNumber: z.string(),
+        subjects: z.array(subjectSchema),
+      })
+      .optional()
+      .refine(
+        (s) =>
+          !s ||
+          (s.examType || s.examYear || s.examNumber || (s.subjects && s.subjects.length > 0))
+            ? s.examType &&
+              s.examYear &&
+              s.examNumber &&
+              s.subjects.length >= 5 &&
+              s.subjects.every((sub) => sub.subject && sub.grade)
+            : true,
+        { message: 'Please complete all Sitting 2 fields or leave it entirely empty.' }
+      ),
+  });
 
 export default function ExamResults() {
   const { formData, updateFormData, nextStep, prevStep } = useFormStep();
   const { data: session } = useSession();
 
-  // Load saved data from localStorage if any
-  const savedFormData = typeof window !== 'undefined'
-    ? JSON.parse(localStorage.getItem('examResults') || 'null')
-    : null;
-
   const {
     register,
     control,
     handleSubmit,
-    reset,
-    watch,
     formState: { errors },
+    watch,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: savedFormData || formData.examResults || {
+    defaultValues: formData.examResults || {
       sitting1: {
         examType: '',
         examYear: '',
@@ -55,10 +68,23 @@ export default function ExamResults() {
         examType: '',
         examYear: '',
         examNumber: '',
-        subjects: Array(5).fill({ subject: '', grade: '' }),
+        subjects: [],
       },
     },
   });
+
+  const sitting2Values = watch('sitting2');
+
+  const isSecondSittingFilled = (s2) => {
+    if (!s2) return false;
+    const { examType, examYear, examNumber, subjects } = s2;
+    return (
+      examType.trim() ||
+      examYear.trim() ||
+      examNumber.trim() ||
+      (subjects && subjects.some((sub) => sub.subject || sub.grade))
+    );
+  };
 
   const { fields: subjects1, append: append1, remove: remove1 } = useFieldArray({
     control,
@@ -70,25 +96,10 @@ export default function ExamResults() {
     name: 'sitting2.subjects',
   });
 
-  // Watch form data and save to localStorage on every change
-  useEffect(() => {
-    const subscription = watch((value) => {
-      localStorage.setItem('examResults', JSON.stringify(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  // Reset form if context formData changes
-  useEffect(() => {
-    if (formData.examResults) {
-      reset(formData.examResults);
-    }
-  }, [formData.examResults, reset]);
-
   const gradeOptions = ['A1', 'B2', 'B3', 'C4', 'C5', 'C6', 'D7', 'E8', 'F9'];
 
-  const onSubmit = async (formValues) => {
-    updateFormData({ examResults: formValues });
+  const onSubmit = async (values) => {
+    updateFormData({ examResults: values });
 
     try {
       await fetch('/api/apply/step-4', {
@@ -96,45 +107,61 @@ export default function ExamResults() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: session?.user?.id,
-          data: formValues,
+          data: values,
         }),
       });
     } catch (err) {
-      console.error('Failed to submit step-4 data:', err);
+      console.error('Error saving exam results:', err);
     }
 
     nextStep();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <h3>Sitting 1</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
+      <h2 className={styles.heading}>Step 4: Exam Results</h2>
+      <p className={styles.subtext}>Enter your WAEC/NECO/NABTEB exam details below.</p>
 
-      <label>Exam Type</label>
-      <select {...register('sitting1.examType')} className={styles.input}>
-        <option value="">Select</option>
-        <option value="WAEC">WAEC</option>
-        <option value="NECO">NECO</option>
-        <option value="NABTEB">NABTEB</option>
-      </select>
-      {errors.sitting1?.examType && <p className={styles.error}>{errors.sitting1.examType.message}</p>}
+      {/* === TABLE PREVIEW REMOVED FROM HERE === */}
 
-      <label>Exam Year</label>
-      <input type="text" {...register('sitting1.examYear')} className={styles.input} />
-      {errors.sitting1?.examYear && <p className={styles.error}>{errors.sitting1.examYear.message}</p>}
+      <h3>Sitting 1 (Required)</h3>
 
-      <label>Exam Number</label>
-      <input type="text" {...register('sitting1.examNumber')} className={styles.input} />
-      {errors.sitting1?.examNumber && <p className={styles.error}>{errors.sitting1.examNumber.message}</p>}
+      <div className={styles.field}>
+        <label>Exam Type</label>
+        <select {...register('sitting1.examType')} className={styles.input}>
+          <option value="">Select</option>
+          <option value="WAEC">WAEC</option>
+          <option value="NECO">NECO</option>
+          <option value="NABTEB">NABTEB</option>
+        </select>
+        {errors?.sitting1?.examType && (
+          <p className={styles.error}>{errors.sitting1.examType.message}</p>
+        )}
+      </div>
 
-      {subjects1.map((field, index) => (
-        <div key={field.id} className={styles.subjectRow}>
-          <label>Subject {index + 1}</label>
+      <div className={styles.field}>
+        <label>Exam Year</label>
+        <input type="text" {...register('sitting1.examYear')} className={styles.input} />
+        {errors?.sitting1?.examYear && (
+          <p className={styles.error}>{errors.sitting1.examYear.message}</p>
+        )}
+      </div>
+
+      <div className={styles.field}>
+        <label>Exam Number</label>
+        <input type="text" {...register('sitting1.examNumber')} className={styles.input} />
+        {errors?.sitting1?.examNumber && (
+          <p className={styles.error}>{errors.sitting1.examNumber.message}</p>
+        )}
+      </div>
+
+      {subjects1.map((_, index) => (
+        <div key={index} className={styles.subjectRow}>
           <select {...register(`sitting1.subjects.${index}.subject`)} className={styles.input}>
-            <option value="">Select</option>
-            {examSubjects.map((subject) => (
-              <option key={subject} value={subject}>
-                {subject}
+            <option value="">Subject</option>
+            {examSubjects.map((subj) => (
+              <option key={subj} value={subj}>
+                {subj}
               </option>
             ))}
           </select>
@@ -149,72 +176,96 @@ export default function ExamResults() {
           </select>
 
           {index >= 5 && (
-            <button type="button" onClick={() => remove1(index)} className={styles.removeBtn}>
+            <button
+              type="button"
+              onClick={() => remove1(index)}
+              className={styles.removeBtn}
+            >
               Remove
             </button>
           )}
         </div>
       ))}
 
-      <button type="button" onClick={() => append1({ subject: '', grade: '' })} className={styles.addBtn}>
+      <button
+        type="button"
+        onClick={() => append1({ subject: '', grade: '' })}
+        className={styles.addBtn}
+      >
         Add Subject
       </button>
 
-      <hr className={styles.divider} />
+      {isSecondSittingFilled(sitting2Values) && (
+        <>
+          <hr className={styles.divider} />
+          <h3>Sitting 2 (Optional)</h3>
 
-      <h3>Sitting 2 (Optional)</h3>
+          <div className={styles.field}>
+            <label>Exam Type</label>
+            <select {...register('sitting2.examType')} className={styles.input}>
+              <option value="">Select</option>
+              <option value="WAEC">WAEC</option>
+              <option value="NECO">NECO</option>
+              <option value="NABTEB">NABTEB</option>
+            </select>
+          </div>
 
-      <label>Exam Type</label>
-      <select {...register('sitting2.examType')} className={styles.input}>
-        <option value="">Select</option>
-        <option value="WAEC">WAEC</option>
-        <option value="NECO">NECO</option>
-        <option value="NABTEB">NABTEB</option>
-      </select>
+          <div className={styles.field}>
+            <label>Exam Year</label>
+            <input type="text" {...register('sitting2.examYear')} className={styles.input} />
+          </div>
 
-      <label>Exam Year</label>
-      <input type="text" {...register('sitting2.examYear')} className={styles.input} />
+          <div className={styles.field}>
+            <label>Exam Number</label>
+            <input type="text" {...register('sitting2.examNumber')} className={styles.input} />
+          </div>
 
-      <label>Exam Number</label>
-      <input type="text" {...register('sitting2.examNumber')} className={styles.input} />
+          {subjects2.map((_, index) => (
+            <div key={index} className={styles.subjectRow}>
+              <select {...register(`sitting2.subjects.${index}.subject`)} className={styles.input}>
+                <option value="">Subject</option>
+                {examSubjects.map((subj) => (
+                  <option key={subj} value={subj}>
+                    {subj}
+                  </option>
+                ))}
+              </select>
 
-      {subjects2.map((field, index) => (
-        <div key={field.id} className={styles.subjectRow}>
-          <label>Subject {index + 1}</label>
-          <select {...register(`sitting2.subjects.${index}.subject`)} className={styles.input}>
-            <option value="">Select</option>
-            {examSubjects.map((subject) => (
-              <option key={subject} value={subject}>
-                {subject}
-              </option>
-            ))}
-          </select>
+              <select {...register(`sitting2.subjects.${index}.grade`)} className={styles.input}>
+                <option value="">Grade</option>
+                {gradeOptions.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
 
-          <select {...register(`sitting2.subjects.${index}.grade`)} className={styles.input}>
-            <option value="">Grade</option>
-            {gradeOptions.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
+              <button
+                type="button"
+                onClick={() => remove2(index)}
+                className={styles.removeBtn}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
 
-          <button type="button" onClick={() => remove2(index)} className={styles.removeBtn}>
-            Remove
+          <button
+            type="button"
+            onClick={() => append2({ subject: '', grade: '' })}
+            className={styles.addBtn}
+          >
+            Add Subject
           </button>
-        </div>
-      ))}
-
-      <button type="button" onClick={() => append2({ subject: '', grade: '' })} className={styles.addBtn}>
-        Add Subject
-      </button>
+        </>
+      )}
 
       <div className={styles.actions}>
         <button type="button" onClick={prevStep} className={styles.backButton}>
           Back
         </button>
         <button type="submit" className={styles.button}>
-          Next
+          Save and Continue
         </button>
       </div>
     </form>
