@@ -41,6 +41,9 @@ export default function ForgotPassword() {
           {loading ? 'Sending...' : 'Send Reset Link'}
         </button>
         {message && <p className={styles.message}>{message}</p>}
+        <p className={styles.signInText}>
+  Remember your password? <Link href="/auth/sign-in" className={styles.link}>Sign In</Link>
+</p>
       </form>
     </div>
   );

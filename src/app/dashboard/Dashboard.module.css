@@ -1,73 +1,79 @@
-.container {
+.dashboard {
+  display: flex;
   min-height: 100vh;
-  background: #f9fafb;
+  width: 100vw;
+  background-color: white;
+  font-family: sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #1a1a2e;
+  color: #fff;
+  padding: 2rem 1rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  flex-direction: column;
 }
 
-.card {
-  background: #fff;
-  padding: 2rem 3rem;
-  border-radius: 1rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 700px;
-  text-align: center;
-}
-
-.heading {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #1e3a8a;
-}
-
-.subtext {
-  font-size: 1.1rem;
-  color: #4b5563;
+.logo {
+  font-size: 1.5rem;
   margin-bottom: 2rem;
+  text-align: center;
+  font-weight: bold;
 }
 
-.grid {
-  display: grid;
+.nav {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  flex-grow: 1;
 }
 
-.tile {
-  background: #2563eb;
-  color: white;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
+.navLink {
   display: flex;
-  flex-direction: column;
   align-items: center;
-}
-
-.tile:hover {
-  background: #1d4ed8;
-}
-
-.tileDanger {
-  background: #dc2626;
-  color: white;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
+  gap: 0.75rem;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
   transition: background 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-.tileDanger:hover {
-  background: #b91c1c;
+.navLink:hover {
+  background-color: #33344a;
+}
+
+.logoutButton {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: #e63946;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.logoutButton:hover {
+  background-color: #d62839;
 }
 
 .icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.mainContent {
+  flex-grow: 1;
+  padding: 2rem;
+}
+
+.mainContent h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: var(--font-play);
 }

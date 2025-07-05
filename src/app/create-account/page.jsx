@@ -100,7 +100,7 @@ export default function CreateAccount() {
         </button>
 
         <p className={styles.signInText}>
-          Already have an account? <Link href="/sign-in" className={styles.link}>Sign In</Link>
+          Already have an account? <Link href="/auth/sign-in" className={styles.link}>Sign In</Link>
         </p>
       </form>
     </div>

@@ -2,8 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background-color: #f2f4f8;
+  width: 100vw;
+  background-color: white;
   padding: 20px;
 }
 
@@ -87,4 +87,11 @@
 
 .link:hover {
   text-decoration: underline;
+}
+
+.forgotPassword {
+  text-align: right;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }

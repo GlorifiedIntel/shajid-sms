@@ -72,6 +72,9 @@ export default function ResetPasswordPage() {
         <button type="submit" disabled={loading}>
           {loading ? 'Resetting...' : 'Reset Password'}
         </button>
+        <p className={styles.signInText}>
+  Remember your password? <Link href="/auth/sign-in" className={styles.link}>Sign In</Link>
+</p>
       </form>
     </div>
   );

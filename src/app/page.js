@@ -31,7 +31,7 @@ export default function Home() {
             Create Account
           </Link>
 
-          <Link href="/sign-in" className={`${styles.signinButton} ${styles.large}`}>
+          <Link href="/auth/sign-in" className={`${styles.signinButton} ${styles.large}`}>
             Sign In
           </Link>
         </div>
