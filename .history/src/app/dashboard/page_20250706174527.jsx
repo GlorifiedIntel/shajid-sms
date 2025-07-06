@@ -2,7 +2,6 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import styles from './dashboard.module.css';
 import Link from 'next/link';
 import {
@@ -17,42 +16,38 @@ export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/sign-in');
-    }
-  }, [status, router]);
-
   if (status === 'loading') return <p>Loading...</p>;
-  if (status === 'unauthenticated') return null;
+  if (status === 'unauthenticated') {
+    router.push('/auth/sign-in');
+    return null;
+  }
 
   return (
     <div className={styles.dashboard}>
       <aside className={styles.sidebar}>
         <h2 className={styles.logo}>Dashboard</h2>
-        <nav className={styles.nav} aria-label="Main navigation">
+        <nav className={styles.nav}>
           <Link href="/apply" className={styles.navLink}>
-            <FaFileAlt className={styles.icon} aria-hidden="true" />
+            <FaFileAlt className={styles.icon} />
             Start Application
           </Link>
           <Link href="/apply/payment" className={styles.navLink}>
-            <FaMoneyCheckAlt className={styles.icon} aria-hidden="true" />
+            <FaMoneyCheckAlt className={styles.icon} />
             Pay Application Fee
           </Link>
           <Link href="/apply/status" className={styles.navLink}>
-            <FaClipboardCheck className={styles.icon} aria-hidden="true" />
+            <FaClipboardCheck className={styles.icon} />
             Check Application Status
           </Link>
           <Link href="/dashboard/settings" className={styles.navLink}>
-            <FaCog className={styles.icon} aria-hidden="true" />
+            <FaCog className={styles.icon} />
             Settings
           </Link>
           <button
             className={styles.logoutButton}
             onClick={() => signOut({ callbackUrl: '/auth/sign-in' })}
-            aria-label="Log out"
           >
-            <FaSignOutAlt className={styles.icon} aria-hidden="true" />
+            <FaSignOutAlt className={styles.icon} />
             Log out
           </button>
         </nav>

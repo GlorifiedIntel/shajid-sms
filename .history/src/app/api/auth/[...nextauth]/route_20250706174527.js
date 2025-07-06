@@ -1,10 +1,11 @@
+// app/api/auth/[...nextauth]/route.js
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 
-export const authOptions = {
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -35,7 +36,7 @@ export const authOptions = {
     }),
   ],
   pages: {
-    signIn: '/sign-in', // Make sure your sign-in page is correctly routed
+    signIn: '/sign-in',
   },
   session: {
     strategy: 'jwt',
@@ -57,8 +58,6 @@ export const authOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
-
-const handler = NextAuth(authOptions);
+});
 
 export { handler as GET, handler as POST };
