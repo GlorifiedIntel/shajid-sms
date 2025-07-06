@@ -1,17 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './signIn.module.css';
 
 export default function SignIn() {
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    const emailFromQuery = searchParams.get('email');
+    const showSuccess = searchParams.get('success');
+
+    if (emailFromQuery) {
+      setFormData((prev) => ({ ...prev, email: emailFromQuery }));
+    }
+
+    if (showSuccess === '1') {
+      setSuccessMessage('✅ Account created successfully — please sign in.');
+    }
+  }, [searchParams]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,6 +63,7 @@ export default function SignIn() {
 
         <h1 className={styles.title}>Sign In</h1>
 
+        {successMessage && <p className={styles.success}>{successMessage}</p>}
         {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.inputGroup}>

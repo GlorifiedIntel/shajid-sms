@@ -1,271 +1,261 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Font,
+  pdf,
+} from '@react-pdf/renderer';
 
-// Helper: fetch any image as bytes
-async function fetchImageBytes(url) {
-  const res = await fetch(url);
-  return await res.arrayBuffer();
-}
+Font.register({
+  family: 'Roboto',
+  src: 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxP.ttf',
+});
 
-export async function generateStyledPDF(allData) {
-  const pdfDoc = await PDFDocument.create();
-  let page = pdfDoc.addPage();
-  const { width, height } = page.getSize();
+export async function generateStyledPDF(data) {
+  const doc = (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <View style={styles.header}>
+          <Image src="/logo.png" style={styles.logo} />
+          <Text style={styles.schoolName}>Shajid College of Nursing & Midwifery</Text>
+        </View>
 
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        <Text style={styles.title}>Application Summary</Text>
 
-  let y = height - 50;
-  const bottomMargin = 50;
+        {data?.personalInfo?.photo && (
+          <View style={{ alignItems: 'center', marginBottom: 16 }}>
+            <Image src={data.personalInfo.photo} style={styles.passport} />
+          </View>
+        )}
 
-  try {
-    const logoBytes = await fetchImageBytes('/logo.png');
-    const logoImage = await pdfDoc.embedPng(logoBytes);
-    const logoDims = logoImage.scale(0.25);
-    page.drawImage(logoImage, {
-      x: width - logoDims.width - 40,
-      y: height - logoDims.height - 30,
-      width: logoDims.width,
-      height: logoDims.height,
-    });
-  } catch (e) {
-    console.warn('Logo image not found or failed to load:', e);
-  }
+        <Section title="Personal Information">
+          <Item label="Full Name" value={data.personalInfo?.fullName} />
+          <Item label="Gender" value={data.personalInfo?.gender} />
+          <Item label="Date of Birth" value={data.personalInfo?.dob} />
+          <Item label="Email" value={data.personalInfo?.email} />
+          <Item label="Phone" value={data.personalInfo?.phone} />
+          <Item label="Address" value={data.personalInfo?.address} />
+          <Item label="Parent Name" value={data.personalInfo?.parentName} />
+          <Item label="Parent Address" value={data.personalInfo?.parentAddress} />
+        </Section>
 
-  page.drawText('SHAJID COLLEGE OF NURSING', {
-    x: 80,
-    y: height / 2,
-    size: 40,
-    font: boldFont,
-    rotate: { angle: Math.PI / 4 },
-    opacity: 0.08,
-    color: rgb(0.5, 0.5, 0.5),
-  });
+        <Section title="Health Information">
+          <Item label="Blood Group" value={data.healthInfo?.bloodGroup} />
+          <Item label="Genotype" value={data.healthInfo?.genotype} />
+          <Item label="Chronic Illness" value={data.healthInfo?.chronicIllness} />
+          <Item label="Emergency Contact" value={data.healthInfo?.emergencyContact} />
+        </Section>
 
-  // --- Fixed Passport Photo Embedding ---
-  try {
-    const photoUrl = allData.personalInfo?.photo || '/default-avatar.jpg';
-    const photoBytes = await fetchImageBytes(photoUrl);
-    const lowerUrl = photoUrl.toLowerCase();
+        <Section title="Schools Attended">
+          <Table
+            headers={['Level', 'School Name', 'From', 'To']}
+            rows={[
+              [
+                'Primary',
+                data.schoolsAttended?.primarySchool?.name || '-',
+                data.schoolsAttended?.primarySchool?.from || '-',
+                data.schoolsAttended?.primarySchool?.to || '-',
+              ],
+              [
+                'Secondary',
+                data.schoolsAttended?.secondarySchool?.name || '-',
+                data.schoolsAttended?.secondarySchool?.from || '-',
+                data.schoolsAttended?.secondarySchool?.to || '-',
+              ],
+              data.schoolsAttended?.otherInstitutions
+                ? ['Other', data.schoolsAttended.otherInstitutions, '', '']
+                : null,
+            ].filter(Boolean)}
+          />
+        </Section>
 
-    let photoImage;
-    if (lowerUrl.endsWith('.png')) {
-      photoImage = await pdfDoc.embedPng(photoBytes);
-    } else if (lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg')) {
-      photoImage = await pdfDoc.embedJpg(photoBytes);
-    } else {
-      throw new Error('Unsupported image format (must be PNG or JPG)');
-    }
+        {data.examResults?.sitting1?.examType && (
+          <Section title={`Exam Results – Sitting 1 (${data.examResults.sitting1.examType} ${data.examResults.sitting1.examYear})`}>
+            <Item label="Exam Number" value={data.examResults.sitting1.examNumber} />
+            <Table
+              headers={['Subject', 'Grade']}
+              rows={data.examResults.sitting1.subjects.map((s) => [s.subject, s.grade])}
+            />
+          </Section>
+        )}
 
-    const photoDims = photoImage.scale(0.2);
+        {data.examResults?.sitting2?.examType && data.examResults?.sitting2?.subjects?.length > 0 && (
+          <Section title={`Exam Results – Sitting 2 (${data.examResults.sitting2.examType} ${data.examResults.sitting2.examYear})`}>
+            <Item label="Exam Number" value={data.examResults.sitting2.examNumber} />
+            <Table
+              headers={['Subject', 'Grade']}
+              rows={data.examResults.sitting2.subjects.map((s) => [s.subject, s.grade])}
+            />
+          </Section>
+        )}
 
-    page.drawImage(photoImage, {
-      x: 50,
-      y: height - photoDims.height - 40,
-      width: photoDims.width,
-      height: photoDims.height,
-    });
+        <Section title="Program Details">
+          <Item
+            label="Course Choice"
+            value={
+              data.programDetails?.courseChoice ||
+              data.program?.courseChoice
+            }
+          />
+          <Item
+            label="Mode of Study"
+            value={
+              data.programDetails?.modeOfStudy ||
+              data.program?.modeOfStudy
+            }
+          />
+          <Item
+            label="Campus"
+            value={
+              data.programDetails?.campus ||
+              data.program?.campus
+            }
+          />
+        </Section>
 
-    page.drawText('Passport Photo', {
-      x: 50,
-      y: height - photoDims.height - 55,
-      size: 10,
-      font,
-      color: rgb(0.3, 0.3, 0.3),
-    });
-
-    y = height - photoDims.height - 80;
-  } catch (err) {
-    console.warn('Passport photo load failed:', err);
-    y -= 20;
-  }
-  // --- End Passport Photo ---
-
-  function checkAddPage() {
-    if (y < bottomMargin) {
-      page = pdfDoc.addPage();
-      y = height - 50;
-    }
-  }
-
-  const drawLine = () => {
-    page.drawLine({
-      start: { x: 50, y: y + 10 },
-      end: { x: width - 50, y: y + 10 },
-      thickness: 0.5,
-      color: rgb(0.6, 0.6, 0.6),
-    });
-  };
-
-  const drawSectionHeader = (title) => {
-    checkAddPage();
-    page.drawText(title, {
-      x: 50,
-      y,
-      size: 14,
-      font: boldFont,
-      color: rgb(0.2, 0.2, 0.7),
-    });
-    drawLine();
-    y -= 25;
-  };
-
-  const drawField = (label, value, isStrong = false) => {
-    checkAddPage();
-    page.drawText(`${label}:`, {
-      x: 60,
-      y,
-      size: 10,
-      font: boldFont,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    page.drawText(`${value || 'N/A'}`, {
-      x: 150,
-      y,
-      size: 10,
-      font: isStrong ? boldFont : font,
-      color: rgb(0.3, 0.3, 0.3),
-    });
-    y -= 14;
-  };
-
-  const drawSchoolsTable = (primary, secondary, others) => {
-    checkAddPage();
-    page.drawText('Level', { x: 60, y, size: 10, font: boldFont });
-    page.drawText('School Name', { x: 140, y, size: 10, font: boldFont });
-    page.drawText('From', { x: 360, y, size: 10, font: boldFont });
-    page.drawText('To', { x: 420, y, size: 10, font: boldFont });
-    y -= 15;
-
-    const row = (label, school) => {
-      page.drawText(label, { x: 60, y, size: 10, font });
-      page.drawText(school?.name || 'N/A', { x: 140, y, size: 10, font });
-      page.drawText(school?.from || 'N/A', { x: 360, y, size: 10, font });
-      page.drawText(school?.to || 'N/A', { x: 420, y, size: 10, font });
-      y -= 14;
-    };
-
-    row('Primary', primary);
-    row('Secondary', secondary);
-
-    if (others) {
-      page.drawText('Other Institutions:', { x: 60, y, size: 10, font: boldFont });
-      y -= 14;
-      page.drawText(others, { x: 80, y, size: 10, font });
-      y -= 14;
-    }
-  };
-
-  const drawExamTable = (sitting) => {
-    drawField('Exam Type', sitting.examType);
-    drawField('Exam Year', sitting.examYear);
-    drawField('Exam Number', sitting.examNumber);
-
-    checkAddPage();
-    page.drawText('Subject', { x: 60, y, size: 10, font: boldFont });
-    page.drawText('Grade', { x: 300, y, size: 10, font: boldFont });
-    y -= 14;
-
-    (sitting.subjects || []).forEach((s) => {
-      checkAddPage();
-      page.drawText(s.subject || '-', { x: 60, y, size: 10, font });
-      page.drawText(s.grade || '-', { x: 300, y, size: 10, font });
-      y -= 14;
-    });
-  };
-
-  const drawUtmeSubjects = (subjects) => {
-    checkAddPage();
-    page.drawText('Subject', { x: 60, y, size: 10, font: boldFont });
-    y -= 14;
-
-    subjects.forEach((subj) => {
-      checkAddPage();
-      page.drawText(subj, { x: 60, y, size: 10, font });
-      y -= 14;
-    });
-  };
-
-  const space = (amt = 15) => {
-    y -= amt;
-  };
-
-  page.drawText('Application Summary', {
-    x: 50,
-    y,
-    size: 16,
-    font: boldFont,
-    color: rgb(0.1, 0.1, 0.5),
-  });
-  y -= 30;
-
-  const personal = allData.personalInfo || {};
-  drawSectionHeader('Personal Information');
-  drawField('Full Name', personal.fullName, true);
-  drawField('Gender', personal.gender);
-  drawField('Date of Birth', personal.dob);
-  drawField('Email', personal.email);
-  drawField('Phone', personal.phone);
-  drawField('Contact Address', personal.address);
-  drawField('Parent/Guardian Name', personal.parentName);
-  drawField("Parent's Contact Address", personal.parentAddress);
-  space();
-
-  const health = allData.healthInfo || {};
-  drawSectionHeader('Health Information');
-  drawField('Chronic Illness', health.chronicIllness);
-  drawField('Blood Group', health.bloodGroup);
-  drawField('Genotype', health.genotype);
-  drawField('Emergency Contact', health.emergencyContact);
-  space();
-
-  drawSectionHeader('Schools Attended');
-  drawSchoolsTable(
-    allData.schoolsAttended?.primarySchool,
-    allData.schoolsAttended?.secondarySchool,
-    allData.schoolsAttended?.otherInstitutions
+        <Section title="UTME Information">
+          <Item
+            label="JAMB Reg No"
+            value={
+              data.utme?.regNumber ||
+              data.utmeInfo?.regNumber
+            }
+          />
+          <Item
+            label="JAMB Score"
+            value={
+              data.utme?.score ||
+              data.utmeInfo?.score
+            }
+          />
+          <Table
+            headers={['UTME Subjects']}
+            rows={
+              (data.utme?.subjects || data.utmeInfo?.subjects || []).map((subj) => [subj])
+            }
+          />
+        </Section>
+      </Page>
+    </Document>
   );
-  space();
 
-  const sit1 = allData.examResults?.sitting1 || {};
-  drawSectionHeader('Exam Results - Sitting 1');
-  drawExamTable(sit1);
-  space();
-
-  const sit2 = allData.examResults?.sitting2;
-  if (sit2?.examType) {
-    drawSectionHeader('Exam Results - Sitting 2');
-    drawExamTable(sit2);
-    space();
-  }
-
-  const program = allData.programDetails || {};
-  drawSectionHeader('Program Details');
-  drawField('Program of Choice', program.program, true);
-  drawField('Mode of Study', program.mode);
-  drawField('Campus', program.campus);
-  space();
-
-  const utme = allData.utmeInfo || {};
-  drawSectionHeader('UTME Information');
-  drawField('JAMB Reg No', utme.jambRegNo);
-  drawField('JAMB Score', utme.jambScore);
-  drawUtmeSubjects(utme.jambSubjects || []);
-  space();
-
-  drawSectionHeader('Declaration');
-  drawField('Signature', '_________________________');
-  drawField('Date', new Date().toLocaleDateString());
-  space();
-
-  pdfDoc.getPages().forEach((pg, index) => {
-    pg.drawText(`Page ${index + 1} of ${pdfDoc.getPageCount()}`, {
-      x: pg.getWidth() - 100,
-      y: 20,
-      size: 10,
-      font,
-      color: rgb(0.5, 0.5, 0.5),
-    });
-  });
-
-  return await pdfDoc.save();
+  return await pdf(doc).toBlob();
 }
+
+// Layout components
+
+const Section = ({ title, children }) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>{title}</Text>
+    {children}
+  </View>
+);
+
+const Item = ({ label, value }) =>
+  value ? (
+    <View style={styles.item}>
+      <Text style={styles.label}>{label}:</Text>
+      <Text style={styles.value}>{value}</Text>
+    </View>
+  ) : null;
+
+const Table = ({ headers, rows }) => (
+  <View style={styles.table}>
+    <View style={styles.tableRowHeader}>
+      {headers.map((header, i) => (
+        <Text key={i} style={[styles.tableCell, styles.tableHeaderCell]}>
+          {header}
+        </Text>
+      ))}
+    </View>
+    {rows.map((row, i) => (
+      <View key={i} style={styles.tableRow}>
+        {row.map((cell, j) => (
+          <Text key={j} style={styles.tableCell}>
+            {cell}
+          </Text>
+        ))}
+      </View>
+    ))}
+  </View>
+);
+
+const styles = StyleSheet.create({
+  page: {
+    padding: 30,
+    fontSize: 12,
+    fontFamily: 'Roboto',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    marginBottom: 4,
+  },
+  schoolName: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#2e3b55',
+  },
+  title: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  passport: {
+    width: 100,
+    height: 120,
+    objectFit: 'cover',
+  },
+  section: {
+    marginBottom: 20,
+    paddingBottom: 10,
+    borderBottom: '1px solid #ccc',
+  },
+  sectionTitle: {
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: 'bold',
+    color: '#1a237e',
+  },
+  item: {
+    flexDirection: 'row',
+    marginBottom: 4,
+  },
+  label: {
+    width: '40%',
+    fontWeight: 'bold',
+  },
+  value: {
+    width: '60%',
+  },
+  table: {
+    display: 'table',
+    width: 'auto',
+    marginTop: 8,
+  },
+  tableRow: {
+    flexDirection: 'row',
+  },
+  tableRowHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#f0f0f0',
+  },
+  tableCell: {
+    padding: 6,
+    fontSize: 11,
+    border: '1px solid #ccc',
+    flex: 1,
+  },
+  tableHeaderCell: {
+    fontWeight: 'bold',
+  },
+});

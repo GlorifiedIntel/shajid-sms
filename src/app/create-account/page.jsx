@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './createAccount.module.css';
@@ -12,9 +13,12 @@ export default function CreateAccount() {
     password: '',
     confirmPassword: '',
   });
+
   const [passwordStrength, setPasswordStrength] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const router = useRouter();
 
   const checkPasswordStrength = (password) => {
     if (password.length < 6) return 'Weak';
@@ -24,8 +28,11 @@ export default function CreateAccount() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (name === 'password') setPasswordStrength(checkPasswordStrength(value));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'password') {
+      setPasswordStrength(checkPasswordStrength(value));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -38,6 +45,7 @@ export default function CreateAccount() {
     }
 
     setLoading(true);
+
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -53,9 +61,9 @@ export default function CreateAccount() {
       if (!res.ok) throw new Error(data.error);
 
       alert('Account created successfully');
-      setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+      router.push(`/auth/sign-in?email=${encodeURIComponent(formData.email)}&success=1`);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -74,17 +82,35 @@ export default function CreateAccount() {
 
         <div className={styles.inputGroup}>
           <label>Full Name</label>
-          <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required />
+          <input
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className={styles.inputGroup}>
           <label>Email Address</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className={styles.inputGroup}>
           <label>Password</label>
-          <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
           <p className={`${styles.strength} ${styles[passwordStrength.toLowerCase()]}`}>
             Strength: {passwordStrength}
           </p>
@@ -92,7 +118,13 @@ export default function CreateAccount() {
 
         <div className={styles.inputGroup}>
           <label>Confirm Password</label>
-          <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <button type="submit" className={styles.submitButton} disabled={loading}>
@@ -100,7 +132,10 @@ export default function CreateAccount() {
         </button>
 
         <p className={styles.signInText}>
-          Already have an account? <Link href="/auth/sign-in" className={styles.link}>Sign In</Link>
+          Already have an account?{' '}
+          <Link href="/auth/sign-in" className={styles.link}>
+            Sign In
+          </Link>
         </p>
       </form>
     </div>

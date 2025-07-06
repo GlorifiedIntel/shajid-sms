@@ -1,225 +1,172 @@
 /* Review.module.css */
 
 .reviewContainer {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 1.5rem 2rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  width: 900px;
+  margin: 0 auto;
+  padding: 1rem 2rem 3rem 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #222;
+  color: #333;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
 }
 
 .heading {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
+  color: #38383d;
   text-align: center;
-  color: #1a1a1a;
 }
 
-.previewBox {
-  background-color: #f9fafb;
-  border: 1px solid #e2e8f0;
-  padding: 1.5rem;
-  border-radius: 6px;
-  max-height: 450px;
-  overflow-y: auto;
+.section {
   margin-bottom: 2rem;
-  line-height: 1.5;
-  font-size: 1rem;
-  white-space: pre-wrap; /* preserve formatting */
-  font-family: 'Courier New', Courier, monospace;
 }
 
-.sectionTitle {
-  font-size: 1.25rem;
+.sectionHeading {
+  font-size: 1.3rem;
   font-weight: 600;
-  margin-top: 1.5rem;
   margin-bottom: 0.75rem;
-  border-bottom: 2px solid #3b82f6; 
-  padding-bottom: 0.25rem;
-  color: #2563eb; 
+  color: #424349;
+  border-bottom: 2px solid #3f51b5;
+  padding-bottom: 4px;
+}
+
+.subSection {
+  margin-bottom: 1.25rem;
+  padding-left: 1rem;
+  border-left: 3px solid #2f2f31;
+}
+
+.reviewTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  box-shadow: 0 0 5px rgb(0 0 0 / 0.05);
+  background: #fafafa;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.reviewTable th,
+.reviewTable td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.reviewTable thead {
+  background-color: #333745;
+  color: white;
+}
+
+.reviewTable tbody tr:hover {
+  background-color: #e8eaf6;
+}
+
+.tableKey {
+  font-weight: 600;
+  color: #303f9f;
+  width: 40%;
+  vertical-align: top;
+}
+
+.tableValue {
+  color: #444;
+  width: 60%;
+  word-break: break-word;
+}
+
+.passportPhotoContainer {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.passportPhoto {
+  max-width: 150px;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 1px 8px rgb(0 0 0 / 0.2);
+  border: 1px solid #ccc;
+}
+
+.downloadBtn,
+.submitBtn,
+.backButton {
+  cursor: pointer;
+  padding: 10px 22px;
+  font-weight: 600;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.downloadBtn {
+  background-color: #3949ab;
+  color: white;
+  margin: 1rem 0;
+}
+
+.downloadBtn:hover:not(:disabled) {
+  background-color: #303f9f;
+}
+
+.submitBtn {
+  background-color: #1e88e5;
+  color: white;
+  margin-left: 1rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background-color: #1565c0;
+}
+
+.backButton {
+  background-color: #b0bec5;
+  color: #263238;
+}
+
+.backButton:hover:not(:disabled) {
+  background-color: #90a4ae;
+}
+
+.downloadBtn:disabled,
+.submitBtn:disabled,
+.backButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .actions {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  justify-content: flex-end;
   margin-top: 1rem;
 }
 
-.backButton,
-.downloadBtn,
-.submitBtn {
-  cursor: pointer;
-  font-weight: 600;
-  border-radius: 5px;
-  padding: 0.65rem 1.25rem;
-  border: none;
-  font-size: 1rem;
-  transition: background-color 0.25s ease, color 0.25s ease;
-  min-width: 160px;
-  text-align: center;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.backButton {
-  background-color: #e0e7ff; /* light indigo */
-  color: #3730a3; /* indigo-700 */
-}
-
-.backButton:hover:not(:disabled) {
-  background-color: #c7d2fe;
-}
-
-.downloadBtn {
-  background-color: #3b82f6; /* blue-500 */
-  color: white;
-}
-
-.downloadBtn:hover:not(:disabled) {
-  background-color: #2563eb; /* blue-600 */
-}
-
-.submitBtn {
-  background-color: #10b981; /* emerald-500 */
-  color: white;
-}
-
-.submitBtn:hover:not(:disabled) {
-  background-color: #059669; /* emerald-600 */
-}
-
-/* Disabled state */
-.backButton:disabled,
-.downloadBtn:disabled,
-.submitBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Spinner style */
 .spinner {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  border: 3px solid rgba(255, 255, 255, 0.6);
-  border-top-color: #ffffff;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
   border-radius: 50%;
+  width: 16px;
+  height: 16px;
   animation: spin 0.8s linear infinite;
-  vertical-align: middle;
 }
 
-.spinner[aria-label] {
-  /* If you want to visually hide the label but keep accessible */
-  position: relative;
+.submittedMessage {
+  margin-top: 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #388e3c;
+  text-align: center;
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
-}
-
-.currentTitle {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 1.2rem;
-  text-align: center;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  user-select: none;
-}
-
-.reviewTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 2rem;
-}
-
-.reviewTable th,
-.reviewTable td {
-  border: 1px solid #ccc;
-  padding: 0.75rem;
-  text-align: left;
-  vertical-align: top;
-}
-
-.sectionHeading {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.tableKey {
-  font-weight: 500;
-  text-transform: capitalize;
-  width: 35%;
-}
-
-.tableValue {
-  color: #444;
-  width: 65%;
-}
-
-.reviewTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.reviewTable th,
-.reviewTable td {
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  text-align: left;
-}
-
-.reviewTable th {
-  background-color: #f0f0f0;
-}
-
-.section {
-  margin-bottom: 2rem;
-}
-
-.subSection {
-  margin-top: 1.5rem;
-}
-
-.section {
-  margin-bottom: 2rem;
-}
-
-.sectionHeading {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  color: #2c3e50;
-  font-weight: 600;
-}
-
-.passportPhotoContainer {
-  max-width: 150px;
-  max-height: 150px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  padding: 5px;
-  border-radius: 6px;
-  overflow: hidden;
-  display: inline-block;
-  background: white;
-}
-
-.passportPhoto {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  border-radius: 4px;
 }

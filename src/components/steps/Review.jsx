@@ -16,17 +16,11 @@ export default function Step7Review() {
   const [previewing, setPreviewing] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submittedDate, setSubmittedDate] = useState(null);
+  const { formData, prevStep, resetForm } = useFormStep(); // ✅ added resetForm
 
-  const { formData, prevStep } = useFormStep();
-
-  // HYDRATION FIX: only render after client mount
   const [hasMounted, setHasMounted] = useState(false);
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-  if (!hasMounted) {
-    return null; // or <p>Loading...</p>
-  }
+  useEffect(() => setHasMounted(true), []);
+  if (!hasMounted) return null;
 
   const handleFinalSubmit = async () => {
     const confirmSubmit = window.confirm(
@@ -36,13 +30,11 @@ export default function Step7Review() {
 
     if (!formData || Object.keys(formData).length === 0) {
       toast.error('No data to submit');
-      console.error('Submission failed: formData is empty or undefined');
       return;
     }
 
     if (!session?.user?.email) {
       toast.error('User is not authenticated');
-      console.error('Submission failed: session.user.email is missing');
       return;
     }
 
@@ -50,16 +42,11 @@ export default function Step7Review() {
     toast.loading('Submitting application...', { id: 'submit-toast' });
 
     try {
-      console.log('Submitting application with:', {
-        userId: session.user.email,
-        data: formData,
-      });
-
       const res = await fetch('/api/apply/final-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: session.user.email, // use email as userId
+          userId: session.user.email,
           data: formData,
         }),
       });
@@ -72,14 +59,36 @@ export default function Step7Review() {
 
       const result = await res.json();
 
+      const pdfBlob = await generateStyledPDF(formData);
+      const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer()).toString('base64');
+
+      await fetch('/api/send-application-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: session.user.email,
+          name: formData.personalInfo?.fullName || 'Applicant',
+          pdf: pdfBuffer,
+        }),
+      });
+
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = blobUrl;
+      document.body.appendChild(iframe);
+      iframe.onload = () => iframe.contentWindow?.print();
+
       const submittedAt = result.createdAt
         ? new Date(result.createdAt).toLocaleString()
         : new Date().toLocaleString();
 
       setSubmitted(true);
       setSubmittedDate(submittedAt);
-
+      resetForm(); // ✅ Clear the form after successful submission
       toast.success('Application submitted successfully!', { id: 'submit-toast' });
+
+      router.push('/apply/success'); // ✅ Redirect to success page
     } catch (err) {
       console.error(err);
       toast.error('Something went wrong submitting your application.', { id: 'submit-toast' });
@@ -128,11 +137,10 @@ export default function Step7Review() {
       email: 'Email',
       address: 'Address',
     };
-
-    if (customLabels[label]) return customLabels[label];
-
-    const spaced = label.replace(/([a-z])([A-Z])/g, '$1 $2');
-    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+    return (
+      customLabels[label] ||
+      label.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str) => str.toUpperCase())
+    );
   };
 
   const renderSectionTable = (sectionTitle, dataObject) => {
@@ -186,7 +194,7 @@ export default function Step7Review() {
           </thead>
           <tbody>
             {Object.entries(dataObject).map(([key, value]) => (
-              <tr key={key}>
+              <tr key={`${sectionTitle}-${key}`}>
                 <td className={styles.tableKey}>{formatLabel(key)}</td>
                 <td className={styles.tableValue}>
                   {Array.isArray(value)
@@ -205,11 +213,9 @@ export default function Step7Review() {
 
   const renderExamResultsTable = (examResults) => {
     if (!examResults) return null;
-
     return (
       <div className={styles.section}>
         <h3 className={styles.sectionHeading}>Exam Results</h3>
-
         {['sitting1', 'sitting2'].map((sittingKey) => {
           const sitting = examResults[sittingKey];
           if (!sitting || !sitting.examType) return null;
@@ -217,9 +223,12 @@ export default function Step7Review() {
           return (
             <div key={sittingKey} className={styles.subSection}>
               <h4>
-                {sittingKey === 'sitting1' ? 'Sitting 1' : 'Sitting 2'} — {sitting.examType} ({sitting.examYear})
+                {sittingKey === 'sitting1' ? 'Sitting 1' : 'Sitting 2'} — {sitting.examType} (
+                {sitting.examYear})
               </h4>
-              <p><strong>Exam Number:</strong> {sitting.examNumber}</p>
+              <p>
+                <strong>Exam Number:</strong> {sitting.examNumber}
+              </p>
               <table className={styles.reviewTable}>
                 <thead>
                   <tr>
@@ -229,7 +238,7 @@ export default function Step7Review() {
                 </thead>
                 <tbody>
                   {sitting.subjects.map((subj, index) => (
-                    <tr key={index}>
+                    <tr key={`${sittingKey}-${subj.subject}-${index}`}>
                       <td>{subj.subject || '-'}</td>
                       <td>{subj.grade || '-'}</td>
                     </tr>
@@ -247,7 +256,6 @@ export default function Step7Review() {
     <div className={styles.reviewContainer}>
       <h2 className={styles.heading}>Review Your Application</h2>
 
-      {/* Passport Photo */}
       {formData.personalInfo?.photo && (
         <div className={styles.section}>
           <h3 className={styles.sectionHeading}>Passport Photo</h3>
@@ -263,11 +271,13 @@ export default function Step7Review() {
       )}
 
       {formData &&
-        Object.entries(formData).map(([section, values]) =>
-          section === 'examResults'
-            ? renderExamResultsTable(values)
-            : renderSectionTable(section, values)
-        )}
+        Object.entries(formData).map(([section, values]) => (
+          <div key={section}>
+            {section === 'examResults'
+              ? renderExamResultsTable(values)
+              : renderSectionTable(section, values)}
+          </div>
+        ))}
 
       <button
         onClick={handleDownloadPDF}
@@ -282,23 +292,23 @@ export default function Step7Review() {
 
       <div className={styles.actions}>
         {!submitted && (
-          <button
-            onClick={prevStep}
-            disabled={submitting || previewing}
-            className={styles.backButton}
-          >
-            Previous
-          </button>
-        )}
+          <>
+            <button
+              onClick={prevStep}
+              disabled={submitting || previewing}
+              className={styles.backButton}
+            >
+              Previous
+            </button>
 
-        {!submitted && (
-          <button
-            onClick={handleFinalSubmit}
-            disabled={submitting || previewing}
-            className={styles.submitBtn}
-          >
-            {submitting ? <span className={styles.spinner} /> : 'Submit Final Application'}
-          </button>
+            <button
+              onClick={handleFinalSubmit}
+              disabled={submitting || previewing}
+              className={styles.submitBtn}
+            >
+              {submitting ? <span className={styles.spinner} /> : 'Submit Final Application'}
+            </button>
+          </>
         )}
       </div>
 

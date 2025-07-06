@@ -13,13 +13,13 @@
   margin: auto;
 }
 
-h2 {
+.heading {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #1e3a8a;
 }
 
-p {
+.text {
   margin-bottom: 0.75rem;
   color: #333;
 }

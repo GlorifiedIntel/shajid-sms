@@ -1,4 +1,5 @@
-import { clientPromise } from '../../../../lib/mongodb';
+import { dbConnect } from '../../../../lib/mongodb';
+import mongoose from 'mongoose';
 
 export async function POST(req) {
   try {
@@ -11,30 +12,32 @@ export async function POST(req) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db();
-
+    await dbConnect();
+    const db = mongoose.connection;
     const collection = db.collection('applications');
 
-    const filter = { userId };
+    const filter = { userId: new mongoose.Types.ObjectId(userId) };
+    const now = new Date();
+
     const updateDoc = {
       $set: {
         finalSubmission: true,
         submittedData: data,
-        submittedAt: new Date(),
-        updatedAt: new Date(),
+        submittedAt: now,
+        updatedAt: now,
       },
       $setOnInsert: {
-        createdAt: new Date(),
-        userId,
+        createdAt: now,
+        userId: new mongoose.Types.ObjectId(userId),
       },
     };
+
     const options = { upsert: true };
 
     const result = await collection.updateOne(filter, updateDoc, options);
 
     return new Response(
-      JSON.stringify({ message: 'Application submitted successfully', createdAt: new Date() }),
+      JSON.stringify({ message: 'Application submitted successfully', createdAt: now }),
       { status: 200 }
     );
   } catch (error) {

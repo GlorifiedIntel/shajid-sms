@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import styles from "./Sidebar.module.css";
 import { useFormStep } from "@/context/FormContext";
 
@@ -15,13 +16,24 @@ const steps = [
 
 export default function Sidebar() {
   const { step, goToStep } = useFormStep();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // Wait until mounted on client to render to avoid SSR mismatch
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null; // Render nothing on server
+
+  // Fallback if step is undefined
+  const currentStep = typeof step === "number" ? step : 1;
 
   return (
     <div className={styles.sidebar}>
       {steps.map((label, index) => {
         const stepNumber = index + 1;
-        const isActive = step === stepNumber;
-        const isDisabled = step < stepNumber;
+        const isActive = currentStep === stepNumber;
+        const isDisabled = currentStep < stepNumber;
 
         return (
           <div
@@ -44,7 +56,7 @@ export default function Sidebar() {
               }
             }}
             aria-current={isActive ? "step" : undefined}
-            aria-disabled={isDisabled}
+            aria-disabled={isDisabled ? "true" : undefined}
           >
             <div
               className={`${styles.stepCircle} ${

@@ -56,7 +56,7 @@ export default function ApplicationStatusPage() {
     return (
       <DashboardLayout>
         <div className={styles.card}>
-          <h2>Application Not Found</h2>
+          <h2 className={styles.heading}>Application Not Found</h2>
           <p>You haven’t started or submitted an application yet.</p>
           <button onClick={() => router.push('/apply/step-1-personal-info')} className={styles.button}>
             Start Application
@@ -69,11 +69,11 @@ export default function ApplicationStatusPage() {
   return (
     <DashboardLayout>
       <div className={styles.card}>
-        <h2>Your Application Status</h2>
-        <p><strong>Full Name:</strong> {application?.allData?.personalInfo?.fullName || 'N/A'}</p>
-        <p><strong>Program:</strong> {application?.allData?.programDetails?.program || 'N/A'}</p>
-        <p><strong>Submitted:</strong> {application?.submitted ? '✅ Yes' : '❌ No'}</p>
-        <p><strong>Payment Status:</strong> {application?.paymentStatus || 'Pending'}</p>
+        <h2 className={styles.heading}>Your Application Status</h2>
+        <p className={styles.text}><strong>Full Name:</strong> {application?.allData?.personalInfo?.fullName || 'N/A'}</p>
+        <p className={styles.text}><strong>Program:</strong> {application?.allData?.programDetails?.program || 'N/A'}</p>
+        <p className={styles.text}><strong>Submitted:</strong> {application?.submitted ? '✅ Yes' : '❌ No'}</p>
+        <p className={styles.text}><strong>Payment Status:</strong> {application?.paymentStatus || 'Pending'}</p>
 
         {application?.submitted ? (
           <p className={styles.success}>🎉 Your application has been submitted!</p>

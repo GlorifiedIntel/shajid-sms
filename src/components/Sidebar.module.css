@@ -32,7 +32,8 @@
 .stepItem.disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  pointer-events: auto; /* still handle clicks for preventDefault */
+  pointer-events: auto; 
+  user-select: none;    
 }
 
 .stepCircle {
@@ -46,12 +47,14 @@
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   flex-shrink: 0;
   user-select: none;
+  font-weight: normal;
 }
 
 .stepCircle.active {
   background-color: white;
-  color: #2563eb; /* blue-600 */
+  color: #2563eb;
   border: none;
+  font-weight: bold;   
 }
 
 .stepCircle.disabledCircle {

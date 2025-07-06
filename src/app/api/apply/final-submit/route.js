@@ -1,4 +1,5 @@
-import { connectToDatabase } from '@/lib/mongodb';
+import { dbConnect } from '@/lib/mongodb';
+import mongoose from 'mongoose';
 
 export async function POST(req) {
   try {
@@ -11,9 +12,18 @@ export async function POST(req) {
       );
     }
 
-    const { db } = await connectToDatabase();
+    await dbConnect();
 
-    const filter = { userId }; // use email string directly
+    const db = mongoose.connection;
+
+    // Convert userId to ObjectId if it looks like one, else store as string
+    let filter;
+    try {
+      filter = { userId: new mongoose.Types.ObjectId(userId) };
+    } catch {
+      filter = { userId }; // fallback if userId is not a valid ObjectId
+    }
+
     const now = new Date();
 
     const updateDoc = {
@@ -24,13 +34,11 @@ export async function POST(req) {
       },
       $setOnInsert: {
         createdAt: now,
-        userId, // store email as userId
+        userId: filter.userId,
       },
     };
 
-    const result = await db.collection('applications').updateOne(filter, updateDoc, {
-      upsert: true,
-    });
+    const result = await db.collection('applications').updateOne(filter, updateDoc, { upsert: true });
 
     return new Response(
       JSON.stringify({

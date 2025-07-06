@@ -40,3 +40,48 @@
 .button:hover {
   background-color: #1d4ed8;
 }
+
+.summaryWrapper {
+  margin-top: 2rem;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionHeading {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+.summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summaryTable td {
+  border: 1px solid #eee;
+  padding: 0.75rem;
+  vertical-align: top;
+}
+
+.label {
+  font-weight: bold;
+  width: 30%;
+  background: #f9f9f9;
+}
+
+.value {
+  width: 70%;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}

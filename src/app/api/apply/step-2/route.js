@@ -1,4 +1,5 @@
-import { clientPromise } from '../../../../lib/mongodb';
+import { dbConnect } from '../../../../lib/mongodb';
+import mongoose from 'mongoose';
 
 export async function POST(req) {
   try {
@@ -11,12 +12,11 @@ export async function POST(req) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db();
-
+    await dbConnect();
+    const db = mongoose.connection;
     const collection = db.collection('applications');
 
-    const filter = { userId };
+    const filter = { userId: new mongoose.Types.ObjectId(userId) };
     const updateDoc = {
       $set: {
         step2: data,
@@ -24,7 +24,7 @@ export async function POST(req) {
       },
       $setOnInsert: {
         createdAt: new Date(),
-        userId,
+        userId: new mongoose.Types.ObjectId(userId),
       },
     };
     const options = { upsert: true };

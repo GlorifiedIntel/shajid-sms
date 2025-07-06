@@ -84,7 +84,7 @@ export default function PersonalInfo() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: session?.user?.id,
-          data,
+          personalInfo: data,  // <-- fixed key here
         }),
       });
     } catch (error) {
