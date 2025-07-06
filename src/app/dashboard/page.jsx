@@ -25,7 +25,7 @@ export default function Dashboard() {
   return (
     <div className={styles.dashboard}>
       <aside className={styles.sidebar}>
-        <h2 className={styles.logo}>My Dashboard</h2>
+        <h2 className={styles.logo}>Dashboard</h2>
         <nav className={styles.nav}>
           <Link href="/apply" className={styles.navLink}>
             <FaFileAlt className={styles.icon} />
