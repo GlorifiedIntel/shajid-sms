@@ -33,7 +33,7 @@ export default function ApplyPage() {
 
   // Only render the form if authenticated
   if (!session) {
-    return null; // or a message like "You must be signed in"
+    return <div>You must be signed in</div>;
   }
 
   function StepRenderer() {
