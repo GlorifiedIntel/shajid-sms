@@ -19,7 +19,7 @@ export async function generateStyledPDF(data) {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Image src="/logo.png" style={styles.logo} />
+          <Image src="/logo2.png" alt="Shajid College Logo" style={styles.logo} />
           <Text style={styles.schoolName}>Shajid College of Nursing & Midwifery</Text>
         </View>
 
@@ -27,7 +27,11 @@ export async function generateStyledPDF(data) {
 
         {data?.personalInfo?.photo && (
           <View style={{ alignItems: 'center', marginBottom: 16 }}>
-            <Image src={data.personalInfo.photo} style={styles.passport} />
+            <Image
+              src={data.personalInfo.photo}
+              alt="Applicant Passport Photo"
+              style={styles.passport}
+            />
           </View>
         )}
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
+import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 import Token from '@/models/Token';
 import crypto from 'crypto';
