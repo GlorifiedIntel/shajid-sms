@@ -22,7 +22,7 @@ export default function ApplyPage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       // redirect if not logged in
-      router.push('/auth/signin'); // or your login page path
+      router.push('/auth/sign-in'); // or your login page path
     }
   }, [status, router]);
 
