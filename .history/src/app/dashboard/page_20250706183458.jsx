@@ -1,7 +1,9 @@
-import { getServerSession } from 'next-auth/next';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
+'use client';
+
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import styles from './dashboard.module.css';
+import Link from 'next/link';
 import {
   FaFileAlt,
   FaMoneyCheckAlt,
@@ -9,13 +11,15 @@ import {
   FaCog,
   FaSignOutAlt
 } from 'react-icons/fa';
-import { authOptions } from '@/lib/auth'; // adjust this import path to where you define your NextAuth options
 
-export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+export default function Dashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  if (!session) {
-    redirect('/auth/sign-in');
+  if (status === 'loading') return <p>Loading...</p>;
+  if (status === 'unauthenticated') {
+    router.push('/auth/sign-in');
+    return null;
   }
 
   return (
@@ -39,21 +43,18 @@ export default async function DashboardPage() {
             <FaCog className={styles.icon} />
             Settings
           </Link>
-          <form
-            action="/api/auth/signout"
-            method="post"
-            className={styles.logoutForm}
+          <button
+            className={styles.logoutButton}
+            onClick={() => signOut({ callbackUrl: '/auth/sign-in' })}
           >
-            <button type="submit" className={styles.logoutButton}>
-              <FaSignOutAlt className={styles.icon} />
-              Log out
-            </button>
-          </form>
+            <FaSignOutAlt className={styles.icon} />
+            Log out
+          </button>
         </nav>
       </aside>
 
       <main className={styles.mainContent}>
-        <h1>Welcome, {session.user.name || 'User'}!</h1>
+        <h1>Welcome, {session?.user?.name || 'User'}!</h1>
         <p>Select an option from the sidebar to get started.</p>
       </main>
     </div>
