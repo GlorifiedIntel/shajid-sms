@@ -51,7 +51,7 @@ export default function ResetPasswordPage() {
     <div className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.form}>
         <Image src="/logo2.png" alt="Logo" width={80} height={80} className={styles.logo} />
-        <h1>Reset Password</h1>
+        <h1 className={styles.heading}>Reset Password</h1>
         {error && <p className={styles.error}>{error}</p>}
         {success && <p className={styles.success}>{success}</p>}
 
@@ -60,16 +60,16 @@ export default function ResetPasswordPage() {
           placeholder="New password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          required
+          required className={styles.input}
         />
         <input
           type="password"
           placeholder="Confirm new password"
           value={confirm}
           onChange={e => setConfirm(e.target.value)}
-          required
+          required className={styles.input}
         />
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className={styles.button}>
           {loading ? 'Resetting...' : 'Reset Password'}
         </button>
         <p className={styles.signInText}>

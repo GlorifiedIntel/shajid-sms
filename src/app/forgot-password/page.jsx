@@ -29,15 +29,15 @@ export default function ForgotPassword() {
     <div className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.form}>
         <Image src="/logo2.png" alt="Logo" width={80} height={80} className={styles.logo} />
-        <h1>Forgot Password</h1>
+        <h1 className={styles.heading}>Forgot Password</h1>
         <input
           type="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          required className={styles.input}
         />
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className={styles.button}>
           {loading ? 'Sending...' : 'Send Reset Link'}
         </button>
         {message && <p className={styles.message}>{message}</p>}
