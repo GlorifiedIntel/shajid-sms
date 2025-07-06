@@ -1,5 +1,9 @@
 'use client';
 
+import { useSession } from 'next-auth/react';  // import session hook
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';  // client side router in Next.js 13 app dir
+
 import { FormProvider, useFormStep } from '@/context/FormContext';
 import Sidebar from '@/components/Sidebar';
 import PersonalInfo from '@/components/steps/PersonalInfo';
@@ -12,7 +16,26 @@ import Review from '@/components/steps/Review';
 import styles from './applicationform.module.css';
 
 export default function ApplyPage() {
-  // StepRenderer moved inside ApplyPage to access context properly
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      // redirect if not logged in
+      router.push('/auth/signin'); // or your login page path
+    }
+  }, [status, router]);
+
+  // Show loading while session status is loading
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  // Only render the form if authenticated
+  if (!session) {
+    return null; // or a message like "You must be signed in"
+  }
+
   function StepRenderer() {
     const { step } = useFormStep();
 
