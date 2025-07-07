@@ -14,7 +14,7 @@ export default function WhenToApply() {
 
 <p>
   Follow the steps below to apply. Start your journey in healthcare today — apply when you're ready, and we’ll be here to support you every step of the way.
-  If you have any questions or need help with your application, feel free to contact our admissions team at <strong>admissions@shajidcollege.edu.ng</strong>.
+  If you have any questions or need help with your application, feel free to contact our admissions team at <strong>admissions@shajidnursingcollege.edu.ng</strong>.
 </p>
 
       <>

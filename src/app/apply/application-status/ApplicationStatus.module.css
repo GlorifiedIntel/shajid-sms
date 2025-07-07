@@ -1,0 +1,140 @@
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  font-family: var(--font-play)
+}
+
+.heading {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.statusCard {
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  margin-bottom: 2rem;
+}
+
+.statusLabel {
+  font-size: 16px;
+  color: #444;
+}
+
+.submitted,
+.inProgress {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.submitted {
+  color: #2e7d32;
+}
+
+.inProgress {
+  color: #ef6c00;
+}
+
+.submittedDate,
+.reviewStatus {
+  margin-top: 0.6rem;
+  font-size: 14px;
+  color: #555;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.editButton,
+.printButton,
+.downloadButton {
+  padding: 0.75rem 1.5rem;
+  font-size: 15px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.editButton {
+  background-color: #232425;
+  color: white;
+}
+
+.editButton:hover {
+  background-color: #0d2a49;
+}
+
+.printButton {
+  background-color: #232425;
+  color: white;
+}
+
+.printButton:hover {
+  background-color: #0d2a49;
+}
+
+.downloadButton {
+  background-color: #232425;
+  color: white;
+}
+
+.downloadButton:hover {
+  background-color: #0d2a49;
+}
+
+.progressContainer {
+  margin-top: 1.5rem;
+}
+
+.progressBar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+}
+
+.step {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ccc;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.8);
+  animation: fadeIn 0.6s forwards;
+}
+
+.stepComplete {
+  background-color: #0066cc;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 16px;
+  color: #666;
+}

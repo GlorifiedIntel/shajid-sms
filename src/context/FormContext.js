@@ -1,22 +1,33 @@
-'use client';
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 const FormContext = createContext();
 
 export function FormProvider({ children }) {
+  const { data: session } = useSession();
   const [hasMounted, setHasMounted] = useState(false);
 
-  // State for step and formData initialized with defaults
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
+  const [lastUser, setLastUser] = useState(null);
 
-  // Mark as mounted after first client render
+  // ✅ Declare resetForm early so it's available in useEffect below
+  const resetForm = () => {
+    setFormData({});
+    setStep(1);
+    if (hasMounted) {
+      localStorage.removeItem('formData');
+      localStorage.removeItem('formStep');
+      localStorage.removeItem('formUser');
+    }
+  };
+
+  // Mark as mounted
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  // Load saved data only after mount
+  // Load saved form only after mount
   useEffect(() => {
     if (hasMounted) {
       const savedStep = localStorage.getItem('formStep');
@@ -24,17 +35,30 @@ export function FormProvider({ children }) {
 
       const savedData = localStorage.getItem('formData');
       setFormData(savedData ? JSON.parse(savedData) : {});
+
+      const savedUser = localStorage.getItem('formUser');
+      setLastUser(savedUser || null);
     }
   }, [hasMounted]);
 
-  // Save step to localStorage on change (only after mount)
+  // ✅ Now resetForm is safe to use here
+  useEffect(() => {
+    if (!hasMounted || !session?.user?.email) return;
+
+    if (lastUser && lastUser !== session.user.email) {
+      resetForm(); // clear form if logged-in user has changed
+    }
+
+    setLastUser(session.user.email);
+    localStorage.setItem('formUser', session.user.email);
+  }, [session?.user?.email, hasMounted, lastUser, resetForm]);
+
   useEffect(() => {
     if (hasMounted) {
       localStorage.setItem('formStep', step.toString());
     }
   }, [step, hasMounted]);
 
-  // Save formData to localStorage on change (only after mount)
   useEffect(() => {
     if (hasMounted) {
       localStorage.setItem('formData', JSON.stringify(formData));
@@ -51,15 +75,6 @@ export function FormProvider({ children }) {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
-  const resetForm = () => {
-    setFormData({});
-    setStep(1);
-    if (hasMounted) {
-      localStorage.removeItem('formData');
-      localStorage.removeItem('formStep');
-    }
-  };
-
   const stepTitles = {
     1: 'Personal Information',
     2: 'Health Information',
@@ -72,7 +87,6 @@ export function FormProvider({ children }) {
 
   const currentStepTitle = stepTitles[step] || '';
 
-  // While not mounted, render nothing to avoid hydration mismatch
   if (!hasMounted) return null;
 
   return (

@@ -35,7 +35,7 @@ export default function Dashboard() {
             <FaMoneyCheckAlt className={styles.icon} />
             Pay Application Fee
           </Link>
-          <Link href="/apply/status" className={styles.navLink}>
+          <Link href="/apply/application-status" className={styles.navLink}>
             <FaClipboardCheck className={styles.icon} />
             Check Application Status
           </Link>
