@@ -57,8 +57,18 @@ export default function CreateAccount() {
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      let data = {};
+
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : {};
+      } catch (parseError) {
+        throw new Error('Invalid JSON response from server');
+      }
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
 
       alert('Account created successfully');
       router.push(`/auth/sign-in?email=${encodeURIComponent(formData.email)}&success=1`);

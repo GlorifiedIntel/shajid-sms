@@ -4,11 +4,15 @@ import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req) {
-  await dbConnect();
-  const body = await req.json();
-  const { fullName, email, password } = body;
-
   try {
+    await dbConnect();
+    const body = await req.json();
+    const { fullName, email, password } = body;
+
+    if (!fullName || !email || !password) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json({ error: 'User already exists' }, { status: 400 });
@@ -24,8 +28,10 @@ export async function POST(req) {
 
     await user.save();
 
-    return NextResponse.json({ message: 'User created successfully' });
+    return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+
   } catch (error) {
+    console.error('[REGISTER_ERROR]', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
