@@ -1,0 +1,64 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.card {
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.status {
+  font-size: 1.125rem;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.inReview {
+  background-color: #fefcbf; /* yellow */
+  color: #744210;
+}
+
+.submitted {
+  background-color: #c6f6d5; /* green */
+  color: #22543d;
+}
+
+.rejected {
+  background-color: #fed7d7;
+  color: #9b2c2c;
+}
+
+.checklist {
+  list-style: none;
+  padding-left: 0;
+}
+
+.checklist li {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile p {
+  margin-bottom: 8px;
+}

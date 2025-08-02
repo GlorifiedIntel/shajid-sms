@@ -1,0 +1,60 @@
+/* DashboardSidebar.module.css */
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #2d3748; 
+  color: #ffffff;
+  padding: 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 16px;
+}
+
+.link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+}
+
+.link:hover {
+  background-color: #4a5568; 
+  color: #e2e8f0;
+  transform: translateX(4px);
+  font-weight: bold;
+}
+
+.active {
+  background-color: #edf2f7; 
+  color: #2b6cb0;             
+  font-weight: bold;
+}
+
+.active:hover {
+  background-color: #e2e8f0; 
+  color: #2b6cb0;
+  transform: translateX(4px);
+  font-weight: bold;
+}
