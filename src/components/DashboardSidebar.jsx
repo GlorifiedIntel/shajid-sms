@@ -1,4 +1,3 @@
-// components/DashboardSidebar.jsx
 'use client';
 
 import Link from 'next/link';
@@ -32,10 +31,13 @@ export default function DashboardSidebar() {
   return (
     <aside className={styles.sidebar}>
       <h2 className={styles.title}>Dashboard</h2>
-      <ul>
+      <ul className={styles.navList}>
         {navItems.map((item) => (
-          <li key={item.href}>
-            <Link href={item.href} className={`${styles.link} ${pathname === item.href ? styles.active : ''}`}>
+          <li key={item.href} className={styles.navItem}>
+            <Link
+              href={item.href}
+              className={`${styles.link} ${pathname === item.href ? styles.active : ''}`}
+            >
               <FontAwesomeIcon icon={item.icon} style={{ marginRight: '8px' }} />
               {item.label}
             </Link>
