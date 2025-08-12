@@ -10,13 +10,14 @@
 }
 
 .applyButton {
-  background-color: #ffbb00;
-  color: #00274c;
+  background-color: #0e162e;
+  color: #f8f7f6;
   padding: 1rem;
   border-radius: 8px;
   font-weight: bold;
   text-decoration: none;
   margin-top: 10px;
+  width: 300px;
 }
 
 .applyButton:hover {

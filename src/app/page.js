@@ -37,15 +37,7 @@ export default function Home() {
           <button onClick={handleApplyNow} className={`${styles.applyButton} ${styles.large}`}>
             Apply Now
           </button>
-
-          <Link href="/create-account" className={`${styles.createButton} ${styles.large}`}>
-            Create Account
-          </Link>
-
-          <Link href="/auth/sign-in" className={`${styles.signinButton} ${styles.large}`}>
-            Sign In
-          </Link>
-        </div>
+          </div>
       </section>
 
       <section className={styles.secondarySection}>
